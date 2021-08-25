@@ -43,6 +43,43 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
           }
 )
 
+####### Can't get this one to work - might be a permissions issue
+#' #' dbWriteTable
+#' #'
+#' #' @rdname dbWriteTable
+#' #' @export
+#' setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
+#'           function(conn, name, value, overwrite=FALSE, append=FALSE,
+#'                    row.names = NA, field.types = NULL,
+#'                    partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
+#'                    compress = FALSE, max.batch = Inf, ...) {
+#'             # prepare the statement
+#'             name <- stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
+#'             # run the query (as AthenaConnection to avoid recursion)
+#'             resp <- dbWriteTable(as(conn, "AthenaConnection"),
+#'                                  name, value, overwrite, append,
+#'                                  row.names, field.types,
+#'                                  partition, s3.location, file.type,
+#'                                  compress, max.batch, ...)
+#'             return(resp)
+#'           }
+#' )
+
+#' @rdname sqlCreateTable
+#' @export
+setMethod("sqlCreateTable", "MoJAthenaConnection",
+          function(con, table, fields, field.types = NULL, partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
+                   compress = FALSE, ...) {
+            # prepare the statement
+            table <- stringr::str_replace_all(table, "__temp__", con@MoJdetails$temp_db_name)
+            # run the query (as AthenaConnection to avoid recursion)
+            resp <- sqlCreateTable(as(con, "AthenaConnection"),
+                                   table, fields, field.types = field.types, partition = partition, s3.location = s3.location, file.type = file.type,
+                                   compress = compress, ...)
+            return(resp)
+          }
+          )
+
 
 #' dbGetTables
 #'
