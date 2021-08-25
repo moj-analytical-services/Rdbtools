@@ -20,7 +20,7 @@ connect_athena <- function(aws_region = "eu-west-1",
   }
 
   # connect to athena
-  con <- DBI::dbConnect(noctua::athena(),
+  con <- dbConnect(noctua::athena(),
                         region_name = aws_region,
                         s3_staging_dir = staging_dir,
                         rstudio_conn_tab = rstudio_conn_tab)

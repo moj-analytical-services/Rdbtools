@@ -22,12 +22,28 @@ get_database_name_from_userid <- function(user_id) {
 }
 
 
-
+# This prepares the sql statement ready for execution, by replacing the
+# __temp__ string with the temporary db name. It also creates the temporary
+# database if it does not already exist.
 prepare_statement <- function(conn, statement) {
+  # check if the special string is present
   if (stringr::str_detect(statement, "__temp__")) {
-    if (!isTRUE(conn@MoJdetails$temp_db_exists)) create_temp_database(conn)
+    # check if the conn object already knows the db exists
+    if (!isTRUE(conn@MoJdetails$temp_db_exists)) {
+      # get all schemas and create the temp database if the temp db is not in that list
+      all_schemas <- dbGetQuery(conn, "show schemas")
+      if(!conn@MoJdetails$temp_db_name %in% all_schemas[,1][[1]]) create_temp_database(conn)
+      else conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
+    }
+
+    # replace __temp__ with the temp db name
     statement <- stringr::str_replace_all(statement, "__temp__", conn@MoJdetails$temp_db_name)
   }
   return(statement)
+}
+
+# as above, but for names we don't need to create the database if it already exists
+prepare_name <- function(conn, name) {
+  stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
 }
 
