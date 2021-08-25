@@ -2,7 +2,7 @@
 create_temp_database <- function(conn) {
 
   create_db_query <- paste0("CREATE DATABASE IF NOT EXISTS ", conn@MoJdetails$temp_db_name)
-  resp <- noctua::dbExecute(conn, create_db_query)
+  resp <- dbExecute(conn, create_db_query)
   cat("Created __temp__ database\n")
   conn@MoJdetails$temp_db_exists <- TRUE # set to true since we just created it
 
@@ -18,11 +18,8 @@ setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
           function(conn, statement, statistics = FALSE, ...) {
             # prepare the statement
             statement <- prepare_statement(conn, statement)
-            # run the query (as AthenaConnection to avoid recursion)
-            data <- dbGetQuery(as(conn, "AthenaConnection"),
-                               statement,
-                               statistics, ...)
-            return(data)
+            # run the query using the noctua function
+            getMethod("dbGetQuery", c("AthenaConnection", "character"), asNamespace("noctua"))(conn, statement, statistics, ...)
           }
 )
 
@@ -35,15 +32,13 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
           function(conn, statement, ...) {
             # prepare the statement
             statement <- prepare_statement(conn, statement)
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- dbExecute(as(conn, "AthenaConnection"),
-                              statement,
-                              ...)
-            return(resp)
+            # run the query using the noctua function
+            getMethod("dbExecute", c("AthenaConnection", "character"), asNamespace("noctua"))(conn, statement, ...)
           }
 )
 
-####### Can't get this one to work - might be a permissions issue
+#' ####### Can't get this one to work - might be a permissions issue
+#'
 #' #' dbWriteTable
 #' #'
 #' #' @rdname dbWriteTable
@@ -55,30 +50,45 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
 #'                    compress = FALSE, max.batch = Inf, ...) {
 #'             # prepare the statement
 #'             name <- stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
-#'             # run the query (as AthenaConnection to avoid recursion)
-#'             resp <- dbWriteTable(as(conn, "AthenaConnection"),
-#'                                  name, value, overwrite, append,
-#'                                  row.names, field.types,
-#'                                  partition, s3.location, file.type,
-#'                                  compress, max.batch, ...)
-#'             return(resp)
+#'             # run the query using the noctua function
+#'             getMethod("dbWriteTable", c("AthenaConnection", "character", "data.frame"), asNamespace("noctua"))(conn,
+#'                                                                                                                name,
+#'                                                                                                                value,
+#'                                                                                                                overwrite,
+#'                                                                                                                append,
+#'                                                                                                                row.names,
+#'                                                                                                                field.types,
+#'                                                                                                                partition,
+#'                                                                                                                s3.location,
+#'                                                                                                                file.type,
+#'                                                                                                                compress,
+#'                                                                                                                max.batch,
+#'                                                                                                                ...)
 #'           }
 #' )
 
+#' sqlCreateTable
 #' @rdname sqlCreateTable
 #' @export
 setMethod("sqlCreateTable", "MoJAthenaConnection",
-          function(con, table, fields, field.types = NULL, partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
+          function(con, table, fields,
+                   field.types = NULL, partition = NULL, s3.location = NULL,
+                   file.type = c("tsv", "csv", "parquet", "json"),
                    compress = FALSE, ...) {
             # prepare the statement
-            table <- stringr::str_replace_all(table, "__temp__", con@MoJdetails$temp_db_name)
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- sqlCreateTable(as(con, "AthenaConnection"),
-                                   table, fields, field.types = field.types, partition = partition, s3.location = s3.location, file.type = file.type,
-                                   compress = compress, ...)
-            return(resp)
+            table <- prepare_name(con, table)
+            # run the query using the noctua function
+            getMethod("sqlCreateTable", "AthenaConnection", asNamespace("noctua"))(con,
+                                                                                   table,
+                                                                                   fields,
+                                                                                   field.types = field.types,
+                                                                                   partition = partition,
+                                                                                   s3.location = s3.location,
+                                                                                   file.type = file.type,
+                                                                                   compress = compress,
+                                                                                   ...)
           }
-          )
+)
 
 
 #' dbGetTables
@@ -89,11 +99,8 @@ setMethod("dbGetTables", "MoJAthenaConnection",
           function(conn, schema = NULL, ...) {
             # prepare the statement
             if (isTRUE(schema == "__temp__")) schema <- conn@MoJdetails$temp_db_name
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- dbGetTables(as(conn, "AthenaConnection"),
-                                schema,
-                                ...)
-            return(resp)
+            # run the query using the noctua function
+            getMethod("dbGetTables", "AthenaConnection", asNamespace("noctua"))(conn, schema, ...)
           }
 )
 
@@ -105,11 +112,8 @@ setMethod("dbListTables", "MoJAthenaConnection",
           function(conn, schema = NULL, ...) {
             # prepare the statement
             if (isTRUE(schema == "__temp__")) schema <- conn@MoJdetails$temp_db_name
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- dbListTables(as(conn, "AthenaConnection"),
-                                 schema,
-                                 ...)
-            return(resp)
+            # run the query using the noctua function
+            getMethod("dbListTables", "AthenaConnection", asNamespace("noctua"))(conn, schema, ...)
           }
 )
 
@@ -120,12 +124,9 @@ setMethod("dbListTables", "MoJAthenaConnection",
 setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
           function(conn, name, ...) {
             # prepare the statement
-            name <- stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- dbExistsTable(as(conn, "AthenaConnection"),
-                                  name,
-                                  ...)
-            return(resp)
+            name <- prepare_name(conn, name)
+            # run the query using the noctua function
+            getMethod("dbExistsTable", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, ...)
           }
 )
 
@@ -136,12 +137,9 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
 setMethod("dbListFields", c("MoJAthenaConnection","character"),
           function(conn, name, ...) {
             # prepare the statement
-            name <- stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- dbListFields(as(conn, "AthenaConnection"),
-                                 name,
-                                 ...)
-            return(resp)
+            name <- prepare_name(conn, name)
+            # run the query using the noctua function
+            getMethod("dbListFields", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, ...)
           }
 )
 
@@ -152,14 +150,9 @@ setMethod("dbListFields", c("MoJAthenaConnection","character"),
 setMethod("dbRemoveTable", c("MoJAthenaConnection","character"),
           function(conn, name, delete_data = TRUE, confirm = FALSE, ...) {
             # prepare the statement
-            name <- stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
-            # run the query (as AthenaConnection to avoid recursion)
-            resp <- dbRemoveTable(as(conn, "AthenaConnection"),
-                                  name,
-                                  delete_data,
-                                  confirm,
-                                  ...)
-            return(resp)
+            name <- prepare_name(conn, name)
+            # run the query using the noctua function
+            getMethod("dbRemoveTable", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, delete_data, confirm, ...)
           }
 )
 

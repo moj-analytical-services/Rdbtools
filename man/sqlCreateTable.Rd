@@ -2,26 +2,7 @@
 % Please edit documentation in R/db_commands.R
 \name{sqlCreateTable,MoJAthenaConnection-method}
 \alias{sqlCreateTable,MoJAthenaConnection-method}
-\title{#' dbWriteTable
-#'
-#' @rdname dbWriteTable
-#' @export
-setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
-function(conn, name, value, overwrite=FALSE, append=FALSE,
-row.names = NA, field.types = NULL,
-partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
-compress = FALSE, max.batch = Inf, ...) {
-# prepare the statement
-name <- stringr::str_replace_all(name, "\strong{temp}", conn@MoJdetails$temp_db_name)
-# run the query (as AthenaConnection to avoid recursion)
-resp <- dbWriteTable(as(conn, "AthenaConnection"),
-name, value, overwrite, append,
-row.names, field.types,
-partition, s3.location, file.type,
-compress, max.batch, ...)
-return(resp)
-}
-)}
+\title{####### Can't get this one to work - might be a permissions issue}
 \usage{
 \S4method{sqlCreateTable}{MoJAthenaConnection}(
   con,
@@ -47,13 +28,21 @@ partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "js
 compress = FALSE, max.batch = Inf, ...) {
 # prepare the statement
 name <- stringr::str_replace_all(name, "\strong{temp}", conn@MoJdetails$temp_db_name)
-# run the query (as AthenaConnection to avoid recursion)
-resp <- dbWriteTable(as(conn, "AthenaConnection"),
-name, value, overwrite, append,
-row.names, field.types,
-partition, s3.location, file.type,
-compress, max.batch, ...)
-return(resp)
+# run the query using the noctua function
+getMethod("dbWriteTable", c("AthenaConnection", "character", "data.frame"), asNamespace("noctua"))(conn,
+name,
+value,
+overwrite,
+append,
+row.names,
+field.types,
+partition,
+s3.location,
+file.type,
+compress,
+max.batch,
+...)
 }
 )
+sqlCreateTable
 }
