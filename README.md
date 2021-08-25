@@ -41,6 +41,25 @@ data <- dbGetQuery(con, "SELECT * FROM __temp__.name") # queries and puts data i
 dbDisconnect(con) # disconnects the connection
 ```
 
+### Using dbplyr
 
+See https://dbplyr.tidyverse.org/index.html
+
+As an example:
+```
+library(tidyverse)
+library(dbplyr)
+
+con <- connect_athena()
+datadb <- tbl(con, sql("select * from database.name")) # create the dbplyr link
+# use dplyr as usual on this dataframe link
+datadb %>%
+  filter(size < 10) %>%
+  group_by() %>%
+  summarise(n = n(),
+            total = sum(total))
+
+dbDisconnect(con) # disconnects the connection
+```
 
 
