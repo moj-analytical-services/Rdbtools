@@ -13,6 +13,8 @@ connect_athena <- function(aws_region = "eu-west-1",
                            rstudio_conn_tab = FALSE
 ) {
 
+  check_credentials()
+
   # work out what your staging dir should be on the AP if unset
   if (is.null(staging_dir)) {
     user_id <- athena_user_id()

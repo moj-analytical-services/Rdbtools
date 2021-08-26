@@ -38,12 +38,12 @@ prepare_statement <- function(conn, statement) {
   # check if the special string is present
   if (stringr::str_detect(statement, "__temp__")) {
     # check if the conn object already knows the db exists
-    if (!isTRUE(conn@MoJdetails$temp_db_exists)) {
+    if (isFALSE(conn@MoJdetails$temp_db_exists)) {
       # get all schemas and create the temp database if the temp db is not in that list
       all_schemas <- dbGetQuery(conn, "show schemas")
-      if(!(conn@MoJdetails$temp_db_name %in% all_schemas[,1][[1]])) {
-        create_temp_database(conn)
-      } else conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
+      exists <- conn@MoJdetails$temp_db_name %in% all_schemas[,1][[1]]
+      if (isFALSE(exists)) create_temp_database(conn)
+      else conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
     }
 
     # replace __temp__ with the temp db name

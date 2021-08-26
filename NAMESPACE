@@ -3,6 +3,7 @@
 export(connect_athena)
 export(create_temp_table)
 export(read_sql)
+export(wipe_aws_credentials)
 exportMethods(dbExecute)
 exportMethods(dbExistsTable)
 exportMethods(dbGetQuery)

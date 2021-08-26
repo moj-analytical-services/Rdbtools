@@ -25,6 +25,7 @@ Imports:
 Collate: 
     'Rdbtools.R'
     'athena_connection.R'
+    'credentials.R'
     'db_commands.R'
     'utils.R'
 Suggests: 
