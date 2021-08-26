@@ -1,5 +1,13 @@
 
+create_temp_database <- function(conn) {
 
+  create_db_query <- paste0("CREATE DATABASE IF NOT EXISTS ", conn@MoJdetails$temp_db_name)
+  resp <- dbExecute(conn, create_db_query)
+  cat("Created __temp__ database\n")
+  conn@MoJdetails$temp_db_exists <- TRUE # set to true since we just created it
+
+  return(resp)
+}
 
 
 athena_user_id <- function(aws_region = "eu-west-1") {
@@ -9,6 +17,7 @@ athena_user_id <- function(aws_region = "eu-west-1") {
 }
 
 
+# returns same output as equivalent function from dbtools
 get_database_name_from_userid <- function(user_id) {
 
   end_str <- user_id %>%
@@ -32,8 +41,9 @@ prepare_statement <- function(conn, statement) {
     if (!isTRUE(conn@MoJdetails$temp_db_exists)) {
       # get all schemas and create the temp database if the temp db is not in that list
       all_schemas <- dbGetQuery(conn, "show schemas")
-      if(!conn@MoJdetails$temp_db_name %in% all_schemas[,1][[1]]) create_temp_database(conn)
-      else conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
+      if(!(conn@MoJdetails$temp_db_name %in% all_schemas[,1][[1]])) {
+        create_temp_database(conn)
+      } else conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
     }
 
     # replace __temp__ with the temp db name

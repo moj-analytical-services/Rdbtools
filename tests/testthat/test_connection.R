@@ -15,6 +15,9 @@ test_that("Check a table doesn't exist", {
 dbExecute(ath_con,
           sqlCreateTable(ath_con, "__temp__.testthat", df))
 
+# dbExecute(ath_con,
+#           sqlAppendTable(ath_con, "__temp__.testthat", df))
+
 test_that("Check that the table was created", {
   expect_equal(dbExistsTable(ath_con, "__temp__.testthat"), TRUE)
 })

@@ -21,9 +21,9 @@ connect_athena <- function(aws_region = "eu-west-1",
 
   # connect to athena
   con <- dbConnect(noctua::athena(),
-                        region_name = aws_region,
-                        s3_staging_dir = staging_dir,
-                        rstudio_conn_tab = rstudio_conn_tab)
+                   region_name = aws_region,
+                   s3_staging_dir = staging_dir,
+                   rstudio_conn_tab = rstudio_conn_tab)
 
   user_id <- athena_user_id()
   temp_db_name <- get_database_name_from_userid(user_id)
