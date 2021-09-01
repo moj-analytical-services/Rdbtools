@@ -5,7 +5,7 @@
 # __temp__ database gets replaced with the appropriate string
 # before calling the appropriate AthenaConnection method from noctua
 # This may not be an exhaustive list of methods, but any other
-# method from the DBI package will still work due to class inheritance,
+# method from the DBI/noctua packages will still work due to class inheritance,
 # but may not replace the __temp__ word (unless it calls dbExecute itself)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 

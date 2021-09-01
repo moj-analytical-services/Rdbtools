@@ -21,7 +21,8 @@ Imports:
     vroom,
     paws,
     stringr,
-    readr
+    readr,
+    lubridate
 Collate: 
     'Rdbtools.R'
     'athena_connection.R'

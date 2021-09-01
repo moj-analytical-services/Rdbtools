@@ -14,11 +14,12 @@ wipe_aws_credentials <- function() {
   Sys.unsetenv("AWS_CREDENTIAL_EXPIRATION")
 }
 
+
 check_credentials <- function() {
   expiry <- Sys.getenv("AWS_CREDENTIAL_EXPIRATION")
 
   if (expiry != "") {
-    if (expiry %>% ymd_hms() < now()) {
+    if (expiry %>% lubridate::ymd_hms() < lubridate::now()) {
       wipe_aws_credentials()
       cat("Expired enivronment credentials removed")
     }
