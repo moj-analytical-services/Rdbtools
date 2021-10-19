@@ -22,7 +22,8 @@ Imports:
     paws,
     stringr,
     readr,
-    lubridate
+    lubridate,
+    httr
 Collate: 
     'Rdbtools.R'
     'athena_connection.R'

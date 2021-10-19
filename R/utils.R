@@ -25,7 +25,8 @@ get_database_name_from_userid <- function(user_id) {
     unlist() %>% tail(1) %>%
     stringr::str_split("-", n = 2) %>%
     unlist() %>% tail(1)%>%
-    stringr::str_replace_all("-", "_")
+    stringr::str_replace_all("-", "_") %>%
+    stringr::str_replace_all(".", "_")
 
   return(paste0("mojap_de_temp_", end_str))
 }
