@@ -19,9 +19,12 @@ connect_athena <- function(aws_region = "eu-west-1",
                            rstudio_conn_tab = FALSE
 ) {
 
+  aws_role_arn <- Sys.getenv('AWS_ROLE_ARN')
+
+  if (nchar(aws_role_arn) > 0) {
+
   # Obtain the WebIdentity credentials
   # ref: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html
-  aws_role_arn <- Sys.getenv('AWS_ROLE_ARN')
   # Set the arbitrary session name to user plus timestamp
   user <- stringr::str_split(aws_role_arn, '/') %>% unlist() %>% tail(1)
   role_session_name = stringr::str_glue("{user}_{as.numeric(Sys.time())}")
@@ -53,7 +56,7 @@ connect_athena <- function(aws_region = "eu-west-1",
 
   # work out what your staging dir should be on the AP if unset
   if (is.null(staging_dir)) {
-    staging_dir = paste("s3://mojap-athena-query-dump", user_id, sep = "/")
+    staging_dir = get_staging_dir_from_userid(user_id)
   }
 
   # connect to athena
@@ -65,6 +68,25 @@ connect_athena <- function(aws_region = "eu-west-1",
                    aws_access_key_id = credentials$AccessKeyId,
                    aws_secret_access_key = credentials$SecretAccessKey,
                    aws_session_token = credentials$SessionToken)
+  } else {
+
+    # get the athena user id, needed for staging dir and temp db name
+    svc <- paws::sts(config=list(region=aws_region))
+    user_id <- svc$get_caller_identity()$UserId
+
+    # work out what your staging dir should be on the AP if unset
+    if (is.null(staging_dir)) {
+      staging_dir = get_staging_dir_from_userid(user_id)
+    }
+
+    # connect to athena
+    # returns an AthenaConnection object, see noctua docs for details
+    con <- dbConnect(noctua::athena(),
+                     region_name = aws_region,
+                     s3_staging_dir = staging_dir,
+                     rstudio_conn_tab = rstudio_conn_tab)
+
+  }
 
   # this works out the temp db name from the user id
   temp_db_name <- get_database_name_from_userid(user_id)
