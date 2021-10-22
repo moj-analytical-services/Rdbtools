@@ -10,13 +10,6 @@ create_temp_database <- function(conn) {
 }
 
 
-athena_user_id <- function(aws_region = "eu-west-1") {
-  svc <- paws::sts(config=list(region=aws_region))
-  user_id <- svc$get_caller_identity()$UserId
-  return(user_id)
-}
-
-
 # returns same output as equivalent function from dbtools
 get_database_name_from_userid <- function(user_id) {
 
@@ -25,9 +18,15 @@ get_database_name_from_userid <- function(user_id) {
     unlist() %>% tail(1) %>%
     stringr::str_split("-", n = 2) %>%
     unlist() %>% tail(1)%>%
-    stringr::str_replace_all("-", "_")
+    stringr::str_replace_all("-", "_") %>%
+    stringr::str_replace_all(".", "_")
 
   return(paste0("mojap_de_temp_", end_str))
+}
+
+
+get_staging_dir_from_userid <- function(user_id) {
+  paste("s3://mojap-athena-query-dump", user_id, sep = "/")
 }
 
 
