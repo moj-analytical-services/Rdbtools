@@ -9,6 +9,24 @@ This provides a few convenience functions for MoJ users, and also extends the me
 
 The existing package dbtools does the same thing, this way is just implemented all in R and doesn't require a Python dependency.
 
+## Installing Rdbtools
+
+If you do not already have one, you will need to get a github personal access token (**Be very careful with this token**).
+To get one:
+
+ - Information on creating a github token can be found here: https://user-guidance.services.alpha.mojanalytics.xyz/github.html#generating-a-pat
+ - Your github personal access token is equivalent to a username/password combination. Keep it safe, and ensure that you do not accidentally commit it to the analytical platform.
+ - The above guidance link shows how to store the PAT safely as an environment variable, which makes the authentication easier.
+
+Then install laload with one of the the following commands:
+
+ - If using renv: `renv::install("moj-analytical-services/Rdbtools")`
+ - If not using renv: `devtools::install_github("moj-analytical-services/laload")` (you may need to install devtools first)
+
+If this returns an error you may need to specify the auth_token parameter as your github PAT string.
+
+You can use the same command to update the package, if it is changed on Github later.
+
 ## How to use
 
 ### Single queries
