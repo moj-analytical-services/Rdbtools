@@ -21,7 +21,7 @@ To get one:
 Then install laload with one of the the following commands:
 
  - If using renv: `renv::install("moj-analytical-services/Rdbtools")`
- - If not using renv: `devtools::install_github("moj-analytical-services/laload")` (you may need to install devtools first)
+ - If not using renv: `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
 
 If this returns an error you may need to specify the auth_token parameter as your github PAT string.
 
