@@ -15,8 +15,8 @@ The existing package dbtools does the same thing, this way is just implemented a
 
 Then install laload with one of the the following commands:
 
- - If using renv v0.14 or greater: `renv::install("git@github.com:moj-analytical-services/Rdbtools.git")`
- - If not using renv: `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first, and will have to authenticate using a Github PAT - this is not recommended, but see AP guidance if you need to do this)
+ - If using renv: `renv::install("moj-analytical-services/Rdbtools")`
+ - If not using renv: `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
 
 You can use the same command to update the package, if it is changed on Github later.
 
