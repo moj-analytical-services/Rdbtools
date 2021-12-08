@@ -4,7 +4,7 @@
 
 ## What is Rdbtools?
 
-This is an extension of the noctua package, for interacting with AWS Athena.
+This is an extension of the `noctua` package, for interacting with AWS Athena.
 See https://dyfanjones.github.io/noctua/reference/index.html
 
 This provides a few convenience functions for MoJ users, and also extends the methods defined in the noctua package to allow users easy access to a safe temporary database for writing out data.
