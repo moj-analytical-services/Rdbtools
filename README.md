@@ -1,6 +1,6 @@
 # Rdbtools
 
-**This package is experimental, and not supported by the MoJ Analytical Platform Team, so use at own risk. The preferred method is to use the `botor` package, which is the package which will give you the highest change of help on the AP support channels.**
+**This package is experimental, and not supported by the MoJ Analytical Platform Team, so use at own risk. The preferred method is to use the `botor` package, which is the package which will give you the highest chance of help on the AP support channels.**
 
 ## What is Rdbtools?
 
