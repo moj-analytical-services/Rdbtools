@@ -208,43 +208,6 @@ create_temp_table <- function(sql,
 
 }
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-## Other methods we could define - note that Athena doesn't like using
-## the INSERT INTO by VALUES way of doing it:
-## https://docs.aws.amazon.com/athena/latest/ug/insert-into.html
-## In practise it is probably better just to introduce new data
-## in R once data is read in?
-
-####### Can't get this one to work - might be a permissions issue
-
-#' dbWriteTable
-#'
-#' @rdname dbWriteTable
-#' @export
-setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
-          function(conn, name, value, overwrite=FALSE, append=FALSE,
-                   row.names = NA, field.types = NULL,
-                   partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
-                   compress = FALSE, max.batch = Inf, ...) {
-            # prepare the statement
-            name <- prepare_statement(conn, name)
-            # run the query using the noctua function
-            getMethod("dbWriteTable", c("AthenaConnection", "character", "data.frame"), asNamespace("noctua"))(conn,
-                                                                                                               name,
-                                                                                                               value,
-                                                                                                               overwrite,
-                                                                                                               append,
-                                                                                                               row.names,
-                                                                                                               field.types,
-                                                                                                               partition,
-                                                                                                               s3.location,
-                                                                                                               file.type,
-                                                                                                               compress,
-                                                                                                               max.batch,
-                                                                                                               ...)
-          }
-)
-
 #' write_small_temp_table
 #'
 #' I can't get dbWriteTable to work, so this is a hacky way to create a table
@@ -252,6 +215,7 @@ setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
 #' Probably only works with numbers and strings
 #' Won't work with a query larger than the maximum SQL size (262144 bytes)
 #' Will only write to tempdb, but don't put it in the table_name parameter.
+#' NOTE the encryptions issue here is problematic: https://docs.aws.amazon.com/athena/latest/ug/insert-into.html
 #'
 #' @export
 write_small_temp_table <- function(con,
@@ -287,5 +251,39 @@ write_small_temp_table <- function(con,
   invisible(dbExecute(con, sql_add_data))
 
 }
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+## Other methods we could define, but I can't get to work
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#' #' dbWriteTable
+#' #'
+#' #' @rdname dbWriteTable
+#' #' @export
+#' setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
+#'           function(conn, name, value, overwrite=FALSE, append=FALSE,
+#'                    row.names = NA, field.types = NULL,
+#'                    partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
+#'                    compress = FALSE, max.batch = Inf, ...) {
+#'             # prepare the statement
+#'             name <- prepare_statement(conn, name)
+#'             # run the query using the noctua function
+#'             getMethod("dbWriteTable", c("AthenaConnection", "character", "data.frame"), asNamespace("noctua"))(conn,
+#'                                                                                                                name,
+#'                                                                                                                value,
+#'                                                                                                                overwrite,
+#'                                                                                                                append,
+#'                                                                                                                row.names,
+#'                                                                                                                field.types,
+#'                                                                                                                partition,
+#'                                                                                                                s3.location,
+#'                                                                                                                file.type,
+#'                                                                                                                compress,
+#'                                                                                                                max.batch,
+#'                                                                                                                ...)
+#'           }
+#' )
+
+
 
 
