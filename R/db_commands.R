@@ -11,6 +11,10 @@
 
 #' dbGetQuery
 #'
+#' See [noctua::dbGetQuery()]
+#'
+#' @inheritParams noctua::dbGetQuery
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetQuery
 #' @export
 setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
@@ -25,6 +29,10 @@ setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
 
 #' dbExecute
 #'
+#' See [noctua::Query]
+#'
+#' @inheritParams noctua::Query
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbExecute
 #' @export
 setMethod("dbExecute", c("MoJAthenaConnection","character"),
@@ -38,6 +46,10 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
 
 #' dbGetTables
 #'
+#' See [noctua::dbGetTables()]
+#'
+#' @inheritParams noctua::dbGetTables
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetTables
 #' @export
 setMethod("dbGetTables", "MoJAthenaConnection",
@@ -51,6 +63,10 @@ setMethod("dbGetTables", "MoJAthenaConnection",
 
 #' dbListTables
 #'
+#' See [noctua::dbListTables()]
+#'
+#' @inheritParams noctua::dbListTables
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbListTables
 #' @export
 setMethod("dbListTables", "MoJAthenaConnection",
@@ -64,6 +80,10 @@ setMethod("dbListTables", "MoJAthenaConnection",
 
 #' dbExistsTable
 #'
+#' See [noctua::dbExistsTable()]
+#'
+#' @inheritParams noctua::dbExistsTable
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbExistsTable
 #' @export
 setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
@@ -77,6 +97,10 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
 
 #' dbListFields
 #'
+#' See [noctua::dbListFields()]
+#'
+#' @inheritParams noctua::dbListFields
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbListFields
 #' @export
 setMethod("dbListFields", c("MoJAthenaConnection","character"),
@@ -90,8 +114,13 @@ setMethod("dbListFields", c("MoJAthenaConnection","character"),
 
 #' dbRemoveTable
 #'
+#' See [noctua::dbRemoveTable()]
+#'
+#' @inheritParams noctua::dbRemoveTable
+#' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbRemoveTable
 #' @export
+#' @md
 setMethod("dbRemoveTable", c("MoJAthenaConnection","character"),
           function(conn, name, delete_data = TRUE, confirm = FALSE, ...) {
             # prepare the statement
