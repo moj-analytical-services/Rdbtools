@@ -284,7 +284,7 @@ write_small_temp_table <- function(con,
   # creates a new table if not appending
   if (!append) dbExecute(con, noctua::sqlCreateTable(con, table_name, table_to_write))
 
-  dbExecute(con, sql_add_data)
+  invisible(dbExecute(con, sql_add_data))
 
 }
 
