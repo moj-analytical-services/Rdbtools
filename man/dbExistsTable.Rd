@@ -6,6 +6,13 @@
 \usage{
 \S4method{dbExistsTable}{MoJAthenaConnection,character}(conn, name, ...)
 }
+\arguments{
+\item{conn}{A DBIConnection object, as returned by \code{connect_athena()}}
+
+\item{name}{A character string specifying a DBMS table name.}
+
+\item{...}{Other parameters passed on to methods.}
+}
 \description{
-dbExistsTable
+See \code{\link[noctua:dbExistsTable]{noctua::dbExistsTable()}}
 }

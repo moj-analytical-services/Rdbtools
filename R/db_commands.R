@@ -106,34 +106,62 @@ setMethod("dbRemoveTable", c("MoJAthenaConnection","character"),
 ## Convenience functions to match dbtools
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+#' read_sql (deprecated)
+#'
+#' A convenience function to match dbtools which reads a table into a tibble or dataframe.
+#' Please now use [dbGetQuery()] directly instead.
+#'
+#' @param sql_query A sql command which is passed to [dbGetQuery()]
+#' @param return_df_as must be 'tibble' or 'data.table'.
+#' @param conn (optional) A DBIConnection object, as returned by `connect_athena()`. If unused then the query will create its own connection and close it subsequently. If reading a table created by a previous connection then the same connection must be supplied, otherwise you may get permission errors.
 #' @export
 read_sql <- function(sql_query,
-                     return_df_as = "tibble") {
+                     return_df_as = "tibble",
+                     conn = NULL) {
 
   if(return_df_as == 'tibble') noctua_options(file_parser = "vroom")
   else if(return_df_as == 'data.table') noctua_options(file_parser = "data.table")
   else stop("input var return_df_as must be one of the following 'tibble' or 'data.table'")
 
 
-  con = connect_athena(rstudio_conn_tab = FALSE)
+  if (is.null(conn)) {
+    conn <- connect_athena(rstudio_conn_tab = FALSE)
+    do_disconnect <- TRUE
+  } else {
+    do_disconnect <- FALSE
+  }
 
-  data <- dbGetQuery(con, sql_query)
+  data <- dbGetQuery(conn, sql_query)
 
   #disconnect athena
-  dbDisconnect(con)
+  if (do_disconnect) dbDisconnect(conn)
 
   return(data)
 
 }
 
+#' create_temp_table (deprecated)
+#'
+#' A convenience function to match dbtools which creates a table in the user's temporary database.
+#' Please now use [dbExecute()] directly instead, e.g. with variables `conn`, `table_name` and `sql` then run: `dbExecute(conn, glue("CREATE TABLE __temp__.{table_name} as {sql}")`)
+#'
+#' @param sql A sql command which generates a table to be created in the temporary location.
+#' @param table_name The name of the table to be created in the user's temporary database.
+#' @param conn (optional) A DBIConnection object, as returned by `connect_athena()`. If unused then the query will create its own connection and close it subsequently.  Note that if you choose not to supply this argument then you may find you cannot access the table later with a different connection.
 #' @export
 create_temp_table <- function(sql,
-                              table_name) {
+                              table_name,
+                              conn = NULL) {
 
-  con = connect_athena(rstudio_conn_tab = FALSE)
+  if (is.null(conn)) {
+    conn <- connect_athena(rstudio_conn_tab = FALSE)
+    do_disconnect <- TRUE
+  } else {
+    do_disconnect <- FALSE
+  }
 
   drop_table_query = paste0("DROP TABLE IF EXISTS __temp__.", table_name)
-  resp <- dbExecute(con, drop_table_query)
+  resp <- dbExecute(conn, drop_table_query)
 
   sql_query <- paste0("CREATE TABLE __temp__.",
                       table_name,
@@ -142,10 +170,10 @@ create_temp_table <- function(sql,
 
 
   # run the query
-  resp <- dbExecute(con, sql_query)
+  resp <- dbExecute(conn, sql_query)
 
   #disconnect
-  dbDisconnect(con)
+  if (do_disconnect) dbDisconnect(conn)
 
   return(resp)
 
