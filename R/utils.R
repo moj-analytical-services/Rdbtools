@@ -14,10 +14,8 @@ create_temp_database <- function(conn) {
 get_database_name_from_userid <- function(user_id) {
 
   end_str <- user_id %>%
-    stringr::str_split(":") %>%
-    unlist() %>% tail(1) %>%
-    stringr::str_split("-", n = 2) %>%
-    unlist() %>% tail(1)%>%
+    stringr::str_remove("^.*:") %>% # remove everything before the colon
+    stringr::str_remove("_[0-9]*[.][0-9]*$") %>% #remove the trailing decimal number
     stringr::str_replace_all("-", "_") %>%
     stringr::str_replace_all("\\.", "_")
 
