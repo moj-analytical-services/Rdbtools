@@ -158,35 +158,42 @@ create_temp_table <- function(sql,
 ## In practise it is probably better just to introduce new data
 ## in R once data is read in?
 
-#' ####### Can't get this one to work - might be a permissions issue
+####### Can't get this one to work - might be a permissions issue
+
+#' dbWriteTable
 #'
-#' #' dbWriteTable
-#' #'
-#' #' @rdname dbWriteTable
-#' #' @export
-#' setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
-#'           function(conn, name, value, overwrite=FALSE, append=FALSE,
-#'                    row.names = NA, field.types = NULL,
-#'                    partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
-#'                    compress = FALSE, max.batch = Inf, ...) {
-#'             # prepare the statement
-#'             name <- stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
-#'             # run the query using the noctua function
-#'             getMethod("dbWriteTable", c("AthenaConnection", "character", "data.frame"), asNamespace("noctua"))(conn,
-#'                                                                                                                name,
-#'                                                                                                                value,
-#'                                                                                                                overwrite,
-#'                                                                                                                append,
-#'                                                                                                                row.names,
-#'                                                                                                                field.types,
-#'                                                                                                                partition,
-#'                                                                                                                s3.location,
-#'                                                                                                                file.type,
-#'                                                                                                                compress,
-#'                                                                                                                max.batch,
-#'                                                                                                                ...)
-#'           }
-#' )
+#' @rdname dbWriteTable
+#' @export
+setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
+          function(conn, name, value, overwrite=FALSE, append=FALSE,
+                   row.names = NA, field.types = NULL,
+                   partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
+                   compress = FALSE, max.batch = Inf, ...) {
+            # prepare the statement
+            name <- prepare_statement(conn, name)
+            # run the query using the noctua function
+            getMethod("dbWriteTable", c("AthenaConnection", "character", "data.frame"), asNamespace("noctua"))(conn,
+                                                                                                               name,
+                                                                                                               value,
+                                                                                                               overwrite,
+                                                                                                               append,
+                                                                                                               row.names,
+                                                                                                               field.types,
+                                                                                                               partition,
+                                                                                                               s3.location,
+                                                                                                               file.type,
+                                                                                                               compress,
+                                                                                                               max.batch,
+                                                                                                               ...)
+          }
+)
+
+# library(tidyverse)
+# test_table <- tibble(col1 = c(1,2,3,4), col2 = c("a","b","c","d"))
+#
+# con <- connect_athena()
+#
+# dbWriteTable(con, "__temp__.tab_test", test_table)
 
 ## I don't think this is needed, since in practise the output will be used with dbExecute anyway which
 ## picks up the __temp__ word
