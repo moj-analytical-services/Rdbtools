@@ -6,6 +6,14 @@
 \usage{
 \S4method{dbListTables}{MoJAthenaConnection}(conn, schema = NULL, ...)
 }
+\arguments{
+\item{conn}{A DBIConnection object, as returned by \code{connect_athena()}}
+
+\item{schema}{Athena schema, default set to NULL to return all tables from all Athena schemas.
+Note: The use of DATABASE and SCHEMA is interchangeable within Athena.}
+
+\item{...}{Other parameters passed on to methods.}
+}
 \description{
-dbListTables
+See \code{\link[noctua:dbListTables]{noctua::dbListTables()}}
 }

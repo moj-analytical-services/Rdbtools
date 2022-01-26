@@ -6,6 +6,13 @@
 \usage{
 \S4method{dbListFields}{MoJAthenaConnection,character}(conn, name, ...)
 }
+\arguments{
+\item{conn}{A DBIConnection object, as returned by \code{connect_athena()}}
+
+\item{name}{a character string with the name of the remote table.}
+
+\item{...}{Other parameters passed on to methods.}
+}
 \description{
-dbListFields
+See \code{\link[noctua:dbListFields]{noctua::dbListFields()}}
 }
