@@ -16,7 +16,8 @@ setClass(
 #' @export
 connect_athena <- function(aws_region = "eu-west-1",
                            staging_dir = NULL,
-                           rstudio_conn_tab = FALSE
+                           rstudio_conn_tab = FALSE,
+                           ...
 ) {
 
   aws_role_arn <- Sys.getenv('AWS_ROLE_ARN')
@@ -67,7 +68,8 @@ connect_athena <- function(aws_region = "eu-west-1",
                    rstudio_conn_tab = rstudio_conn_tab,
                    aws_access_key_id = credentials$AccessKeyId,
                    aws_secret_access_key = credentials$SecretAccessKey,
-                   aws_session_token = credentials$SessionToken)
+                   aws_session_token = credentials$SessionToken,
+                   ...)
   } else {
 
     # get the athena user id, needed for staging dir and temp db name
