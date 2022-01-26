@@ -19,5 +19,6 @@ to avoid deleting other S3 files when the table's definition points to the root 
 \item{...}{Other parameters passed on to methods.}
 }
 \description{
-See \code{\link[noctua:dbRemoveTable]{noctua::dbRemoveTable()}}
+See \code{\link[noctua:dbRemoveTable]{noctua::dbRemoveTable()}}. This function calls \code{noctua::dbRemoveTable()}, after replacing any references to \verb{__temp__}
+in the names argument with your temporary database in Athena.
 }

@@ -14,5 +14,6 @@
 \item{...}{Other parameters passed on to methods.}
 }
 \description{
-See \code{\link[noctua:dbListFields]{noctua::dbListFields()}}
+See \code{\link[noctua:dbListFields]{noctua::dbListFields()}}. This function calls \code{noctua::dbListFields()}, after replacing any references to \verb{__temp__}
+in the name argument with your temporary database in Athena.
 }

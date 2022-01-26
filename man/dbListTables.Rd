@@ -15,5 +15,6 @@ Note: The use of DATABASE and SCHEMA is interchangeable within Athena.}
 \item{...}{Other parameters passed on to methods.}
 }
 \description{
-See \code{\link[noctua:dbListTables]{noctua::dbListTables()}}
+See \code{\link[noctua:dbListTables]{noctua::dbListTables()}}. This function calls \code{noctua::dbListTables()} but if
+the schema argument is \verb{__temp__} then it looks at your temporary database in Athena.
 }

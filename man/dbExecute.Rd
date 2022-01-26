@@ -14,5 +14,7 @@
 \item{...}{Other parameters passed on to methods.}
 }
 \description{
-See \link[noctua:Query]{noctua::Query}
+See \link[noctua:Query]{noctua::Query}. This function calls \code{noctua::dbExecute()}, after replacing any references to \verb{__temp__}
+in the statement with your temporary database in Athena. Your temporary database will be created
+if you do not already have one.
 }
