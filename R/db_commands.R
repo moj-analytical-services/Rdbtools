@@ -250,7 +250,7 @@ setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
 #' I can't get dbWriteTable to work, so this is a hacky way to create a table
 #' and run INSERT INTO to append values to it.
 #' Probably only works with numbers and strings
-#' Probably won't work with more than a few hundred values.
+#' Won't work with a query larger than the maximum SQL size (262144 bytes)
 #' Will only write to tempdb, but don't put it in the table_name parameter.
 #'
 #' @export
@@ -261,35 +261,31 @@ write_small_temp_table <- function(con,
                                    append=FALSE,
                                    row.names = NA) {
 
-  table_exist <- dbExistsTable(con, paste0("__temp__.", table_name))
+  # create the string used to add the data at the end first
+  # so we can check it isn't too long
+  # 262144 is the maximum number of bytes that AWS allows for a single query
+  # also keeps all the hacky bits at the top
+  table_to_write_sql <- rbind(table_to_write[1,], table_to_write) # I don't know why it ignores the first line, so have to add a fake one
+  table_to_write_sql <- table_to_write_sql %>% mutate(across(where(is.character), ~dbQuoteString(con, .x))) # have manually quote strings...
+  sql_add_data <- DBI::sqlAppendTable(con, table_name, table_to_write_sql, row.names = row.names)
+  if (enc2utf8(sql_add_data) %>% charToRaw() %>% length() > 262144) stop("data too large to write with this method - consider breaking up into smaller chunks")
 
+  table_exist <- dbExistsTable(con, paste0("__temp__.", table_name))
   if (overwrite & append) stop("overwrite and append cannot both be TRUE")
   if (table_exist & !append & !overwrite) stop("Table already exists, set overwrite or append to TRUE to proceed")
 
 
   if (table_exist & overwrite) remove_table <- TRUE else remove_table <- FALSE
 
-  if (remove_table) {
-    dbRemoveTable(con, paste0("__temp__.", table_name), confirm = TRUE)
-    warning("removed existing table")
-  }
+  if (remove_table) dbRemoveTable(con, paste0("__temp__.", table_name), confirm = TRUE)
 
   con@info$dbms.name <- con@MoJdetails$temp_db_name # the following won't work unless it thinks it is working in the right database
 
+  # creates a new table if not appending
   if (!append) dbExecute(con, noctua::sqlCreateTable(con, table_name, table_to_write))
 
-  table_to_write <- rbind(table_to_write[1,], table_to_write) # I don't know why it ignores the first line, so have to add a fake one
-  table_to_write <- table_to_write %>% mutate(across(where(is.character), ~dbQuoteString(con, .x))) # have manually quote strings...
-  dbExecute(con, DBI::sqlAppendTable(con, table_name, table_to_write, row.names = row.names))
+  dbExecute(con, sql_add_data)
 
 }
 
 
-# library(tidyverse)
-# test_table <- tibble(col1 = c(1,2,3,4),
-#                      col2 = c("a","b","c","d"),
-#                      col3 = c(4.5,8.8,3.2,4.55555555))
-#
-# con <- connect_athena()
-# write_small_temp_table(con, "write4", test_table, overwrite = TRUE)
-# a <- dbGetQuery(con, "select * from __temp__.write4")
