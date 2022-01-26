@@ -6,6 +6,15 @@
 \usage{
 \S4method{dbGetQuery}{MoJAthenaConnection,character}(conn, statement, statistics = FALSE, ...)
 }
+\arguments{
+\item{conn}{A DBIConnection object, as returned by \code{connect_athena()}}
+
+\item{statement}{a character string containing SQL.}
+
+\item{statistics}{If set to \code{TRUE} will print out AWS Athena statistics of query.}
+
+\item{...}{Other parameters passed on to methods.}
+}
 \description{
-dbGetQuery
+See \code{\link[noctua:dbGetQuery]{noctua::dbGetQuery()}}
 }

@@ -22,12 +22,6 @@ You can use the same command to update the package, if it is changed on Github l
 
 ## How to use
 
-### Single queries
-
-The function `read_sql` is provided which replicates the same function from `dbtools`.
-This creates a database connection, reads the data and then closes the connection every call.
-If you want to do more than one call to Athena the method below is probably better.
-
 ### Connecting a session and querying
 
 See https://dyfanjones.github.io/noctua/reference/index.html for the full list of functions you can call to interact with Athena.
@@ -54,6 +48,18 @@ data <- dbGetQuery(con, "SELECT * FROM __temp__.name") # queries and puts data i
 dbDisconnect(con) # disconnects the connection
 ```
 
+The `__temp__` string substitution is implemented for:
+
+ + dbGetQuery
+ + dbExecute
+ + dbGetTables
+ + dbListTables
+ + dbExistsTable
+ + dbListFields
+ + dbRemoveTable
+
+If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
+
 ### Using dbplyr
 
 See https://dbplyr.tidyverse.org/index.html
@@ -76,4 +82,9 @@ datadb %>%
 dbDisconnect(con) # disconnects the connection
 ```
 
+### Single queries (deprecated)
 
+The function `read_sql` is provided which replicates the same function from `dbtools` - this is kept for backwards compatibility only.
+This creates a database connection, reads the data and then closes the connection every call.
+If you want to do more than one call to Athena the method below is probably better.
+Also note that since authentication has moved to WebIdentity then any new temporary tables created under one connection will only be accessible by that same connection, so `read_sql` cannot be used to read a table created by a another function unless the relevant connection object is supplied to the `con` argument (this is different to previous usage of `read_sql`.
