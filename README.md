@@ -57,6 +57,7 @@ The `__temp__` string substitution is implemented for:
  + dbExistsTable
  + dbListFields
  + dbRemoveTable
+ + dbWriteTable (but not the permission issue in the help for this function by running `?dbWriteTable` in the console)
 
 If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
 
@@ -81,6 +82,10 @@ datadb %>%
 
 dbDisconnect(con) # disconnects the connection
 ```
+
+Note that if you need any function within dbplyr which does a copy (e.g. joining a local table to a remote table)
+then you need to ensure you have the right permissions for the staging directory you are using.
+See the help page for `dbWriteTable` by running `?dbWriteTable` in the console.
 
 ### Single queries (deprecated)
 

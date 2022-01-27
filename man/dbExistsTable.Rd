@@ -14,5 +14,6 @@
 \item{...}{Other parameters passed on to methods.}
 }
 \description{
-See \code{\link[noctua:dbExistsTable]{noctua::dbExistsTable()}}
+See \code{\link[noctua:dbExistsTable]{noctua::dbExistsTable()}}. This function calls noctua::dbExistsTable(), after replacing any references to \verb{__temp__}
+in the name argument with your temporary database in Athena.
 }
