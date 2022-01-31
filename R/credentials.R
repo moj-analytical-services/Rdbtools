@@ -1,27 +1,21 @@
 
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-# Sometimes if using s3tools as well then we can end up with expired AWS credentials
-# in our evironment. These functions remove them if they are expired.
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-
-#' @export
-wipe_aws_credentials <- function() {
-  Sys.unsetenv("AWS_SECRET_ACCESS_KEY")
-  Sys.unsetenv("AWS_ACCESS_KEY_ID")
-  Sys.unsetenv("AWS_SESSION_TOKEN")
-  Sys.unsetenv("AWS_CREDENTIAL_EXPIRATION")
+is_auth_within_expiry <- function(con, window = 5 * 60) {
+  expiry_t <- con@MoJdetails$authentication_expiry
+  ifelse(
+    is.null(expiry_t),
+    TRUE,
+    as.POSIXct(Sys.time(), tz='UTC') + window < expiry_t
+  )
 }
 
-
-check_credentials <- function() {
-  expiry <- Sys.getenv("AWS_CREDENTIAL_EXPIRATION")
-
-  if (expiry != "") {
-    if (expiry %>% lubridate::ymd_hms() < lubridate::now()) {
-      wipe_aws_credentials()
-      cat("Expired enivronment credentials removed")
-    }
+# Check for region in environment variables, otherwise use 'eu-west-1'
+# as the default
+get_region <- function() {
+  if (nchar(Sys.getenv("AWS_DEFAULT_REGION")) > 0) {
+    return(Sys.getenv("AWS_DEFAULT_REGION"))
+  } else if (nchar(Sys.getenv("AWS_REGION")) > 0) {
+    return(Sys.getenv("AWS_REGION"))
+  } else {
+    return("eu-west-1")
   }
 }
