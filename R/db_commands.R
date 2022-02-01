@@ -21,6 +21,7 @@
 #' @export
 setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
           function(conn, statement, statistics = FALSE, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             statement <- prepare_statement(conn, statement)
             # run the query using the noctua function
@@ -41,6 +42,7 @@ setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
 #' @export
 setMethod("dbExecute", c("MoJAthenaConnection","character"),
           function(conn, statement, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             statement <- prepare_statement(conn, statement)
             # run the query using the noctua function
@@ -59,6 +61,7 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
 #' @export
 setMethod("dbGetTables", "MoJAthenaConnection",
           function(conn, schema = NULL, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             if (isTRUE(schema == "__temp__")) schema <- conn@MoJdetails$temp_db_name
             # run the query using the noctua function
@@ -77,6 +80,7 @@ setMethod("dbGetTables", "MoJAthenaConnection",
 #' @export
 setMethod("dbListTables", "MoJAthenaConnection",
           function(conn, schema = NULL, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             if (isTRUE(schema == "__temp__")) schema <- conn@MoJdetails$temp_db_name
             # run the query using the noctua function
@@ -95,6 +99,7 @@ setMethod("dbListTables", "MoJAthenaConnection",
 #' @export
 setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
           function(conn, name, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             name <- prepare_name(conn, name)
             # run the query using the noctua function
@@ -113,6 +118,7 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
 #' @export
 setMethod("dbListFields", c("MoJAthenaConnection","character"),
           function(conn, name, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             name <- prepare_name(conn, name)
             # run the query using the noctua function
@@ -132,6 +138,7 @@ setMethod("dbListFields", c("MoJAthenaConnection","character"),
 #' @md
 setMethod("dbRemoveTable", c("MoJAthenaConnection","character"),
           function(conn, name, delete_data = TRUE, confirm = FALSE, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             name <- prepare_name(conn, name)
             # run the query using the noctua function
@@ -168,6 +175,7 @@ setMethod("dbWriteTable", c("MoJAthenaConnection", "character", "data.frame"),
                    row.names = NA, field.types = NULL,
                    partition = NULL, s3.location = NULL, file.type = c("tsv", "csv", "parquet", "json"),
                    compress = FALSE, max.batch = Inf, ...) {
+            if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
             # prepare the statement
             name <- prepare_statement(conn, name)
             # run the query using the noctua function
@@ -218,6 +226,8 @@ read_sql <- function(sql_query,
     do_disconnect <- FALSE
   }
 
+  if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
+
   data <- dbGetQuery(conn, sql_query)
 
   #disconnect athena
@@ -246,6 +256,8 @@ create_temp_table <- function(sql,
   } else {
     do_disconnect <- FALSE
   }
+
+  if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")
 
   drop_table_query = paste0("DROP TABLE IF EXISTS __temp__.", table_name)
   resp <- dbExecute(conn, drop_table_query)
