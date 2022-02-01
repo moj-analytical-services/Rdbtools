@@ -1,15 +1,21 @@
 # Rdbtools
 
-**This package is experimental, and not supported by the MoJ Analytical Platform Team, so use at own risk. The preferred method is to use the `botor` package, which is the package which will give you the highest chance of help on the AP support channels.**
+**Please note that this is not officially supported by the AP team and is intended to be community supported.**
 
 ## What is Rdbtools?
 
-This is an extension of the `noctua` package, for interacting with AWS Athena.
+This is an extension of the `noctua` package, for interacting with AWS Athena through the MoJ's analytical platform.
 See https://dyfanjones.github.io/noctua/reference/index.html
 
-This provides a few convenience functions for MoJ users, and also extends the methods defined in the noctua package to allow users easy access to a safe temporary database for writing out data.
+The primary purpose of this package is to easily allow MoJ analysts to access data on Athena, without having to understand anything about the underlying authentication systems.
+This access is provided through the R database interface [`DBI`](https://dbi.r-dbi.org/), and so works with the standard database functions used in R.
+It also works with [`dbplyr`](https://dbplyr.tidyverse.org/), which is an extention of `dplyr` allowing you to use familiar tidyvwerse functions on data in Athena itself (reducing the need for large data pre-processing steps in R, and without having to learn SQL).
 
-The existing package dbtools does the same thing, this way is just implemented all in R and doesn't require a Python dependency.
+In addition, this package extends the methods defined in the noctua package to allow users easy access to a safe temporary database for intermediate processing steps.
+
+The secondary purpose of this package is to provide backwards compatability with `dbtools` which does not work on the new AP infrastructure.
+For this the package provides a few convenience functions for MoJ users.
+The key difference with this package over `dbtools` is that it is implemented all in R and doesn't require a Python dependency.
 
 ## Installing Rdbtools
 
@@ -60,6 +66,13 @@ The `__temp__` string substitution is implemented for:
  + dbWriteTable (but not the permission issue in the help for this function by running `?dbWriteTable` in the console)
 
 If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
+
+### The connection object
+
+The connection object returned by `connect_athena()` contains all the information about a single authenticated session which allows access to the databases for which you have permission.
+By default the authenticated session will last for one hour, after which you will have to create a new connection or else refresh your connection.
+For most purposes creating a new connection will be sufficient, however you will lose access to any tables created in the `__temp__` database (as these are only accessible under the same session).
+To refresh a connection, please use the `refresh_athena_connection()` function, or in a long script the `refresh_if_expired()` function may also be useful (see the help pages in RStudio for further details of these functions).
 
 ### Using dbplyr
 
