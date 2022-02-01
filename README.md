@@ -63,7 +63,7 @@ The `__temp__` string substitution is implemented for:
  + dbExistsTable
  + dbListFields
  + dbRemoveTable
- + dbWriteTable (but not the permission issue in the help for this function by running `?dbWriteTable` in the console)
+ + dbWriteTable (but note the permission issue in the help for this function by running `?dbWriteTable` in the console)
 
 If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
 
