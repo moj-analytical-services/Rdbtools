@@ -9,7 +9,7 @@ See https://dyfanjones.github.io/noctua/reference/index.html
 
 The primary purpose of this package is to easily allow MoJ analysts to access data on Athena, without having to understand anything about the underlying authentication systems.
 This access is provided through the R database interface [`DBI`](https://dbi.r-dbi.org/), and so works with the standard database functions used in R.
-It also works with [`dbplyr`](https://dbplyr.tidyverse.org/), which is an extention of `dplyr` allowing you to use familiar tidyvwerse functions on data in Athena itself (reducing the need for large data pre-processing steps in R, and without having to learn SQL).
+It also works with [`dbplyr`](https://dbplyr.tidyverse.org/), which is an extention of `dplyr` allowing you to use familiar tidyverse functions on data in Athena itself (reducing the need for large data pre-processing steps in R, and without having to learn SQL).
 
 In addition, this package extends the methods defined in the noctua package to allow users easy access to a safe temporary database for intermediate processing steps.
 
