@@ -24,7 +24,8 @@ Imports:
     lubridate,
     httr,
     readr,
-    purrr
+    purrr,
+    rlang
 Collate: 
     'Rdbtools.R'
     'athena_connection.R'

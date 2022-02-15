@@ -63,13 +63,19 @@ connect_athena <- function(aws_region = NULL,
       "&DurationSeconds={session_duration}",
       "&RoleSessionName={role_session_name}",
       "&RoleArn={aws_role_arn}",
-      "&WebIdentityToken={readr::read_file(aws_web_identity_token_file)}",
+      "&WebIdentityToken=blah",
       "&Version=2011-06-15"
     )
     response <- httr::POST(query)
+
+    if (!is.null(httr::content(response)$Error$Message)) rlang::abort(c("Something went wrong getting temporary credentials",
+                                                                        "*" = "The message from https://sts.amazonaws.com/ is:",
+                                                                        "i" = httr::content(response)$Error$Message))
+
     credentials <- httr::content(response)$AssumeRoleWithWebIdentityResponse$AssumeRoleWithWebIdentityResult$Credentials
     #temporary_authentication <- TRUE
     authentication_expiry <- as.POSIXct(credentials$Expiration, origin = "1970-01-01", tz="UTC")
+
 
     # Use the WebIdentity credentials to access AWS services
     sts_svc <- paws::sts(
@@ -166,9 +172,9 @@ refresh_athena_connection <- function(conn) {
   session_duration <- conn@MoJdetails$session_duration_set
 
   conn_refreshed <- connect_athena(aws_region = aws_region,
-                                  staging_dir = staging_dir,
-                                  session_duration = session_duration,
-                                  role_session_name = role_session_name)
+                                   staging_dir = staging_dir,
+                                   session_duration = session_duration,
+                                   role_session_name = role_session_name)
 
   # updates the conn slots which are environments to the new refreshed versions
   slotNames(conn) %>%
