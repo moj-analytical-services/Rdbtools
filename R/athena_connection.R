@@ -63,7 +63,7 @@ connect_athena <- function(aws_region = NULL,
       "&DurationSeconds={session_duration}",
       "&RoleSessionName={role_session_name}",
       "&RoleArn={aws_role_arn}",
-      "&WebIdentityToken=blah",
+      "&WebIdentityToken={readr::read_file(aws_web_identity_token_file)}",
       "&Version=2011-06-15"
     )
     response <- httr::POST(query)
