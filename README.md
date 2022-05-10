@@ -67,6 +67,8 @@ The `__temp__` string substitution is implemented for:
 
 If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
 
+Additionally, the `athena_temp_db` function will return a string with the name of the temporary database if required to create specific SQL commands, or in use in other functions not listed above.
+
 ### The connection object
 
 The connection object returned by `connect_athena()` contains all the information about a single authenticated session which allows access to the databases for which you have permission.
