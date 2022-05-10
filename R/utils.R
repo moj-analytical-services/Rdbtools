@@ -1,4 +1,17 @@
 
+#' athena_temp_db
+#'
+#' Returns a string containing the temporary database name for an Athena Connection.
+#' Will also check if that temporary database exists and if not will create it, unless `check_exists = FALSE`.
+#'
+#' @param conn This is a connection object returned by `connect_athena()`.
+#' @param check_exists This is `TRUE` by default.  If set to `FALSE` then it will not check if the temporary database exists and will not create it if it does not exist.
+#'
+#' @examples
+#'  con <- connect_athena() # creates a connection with sensible defaults
+#'  athena_temp_db(con)
+#'  > [1] "mojap_de_temp_alpha_user_Rdbtools_User"
+#'
 #' @export
 athena_temp_db <- function(conn, check_exists = TRUE) {
   if(!isFALSE(check_exists)) {
