@@ -1,4 +1,22 @@
 
+#' @export
+athena_temp_db <- function(conn, check_exists = TRUE) {
+  if(!isFALSE(check_exists)) {
+    # check if the conn object already knows the db exists
+    if (!isTRUE(conn@MoJdetails$temp_db_exists)) {
+      # get all schemas and create the temp database if the temp db is not in that list
+      all_schemas <- dbGetQuery(conn, "show schemas")
+      exists <- conn@MoJdetails$temp_db_name %in% all_schemas[,1]
+      if (isFALSE(exists)) {
+        create_temp_database(conn)
+      } else {
+        conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
+      }
+    }
+  }
+  conn@MoJdetails$temp_db_name
+}
+
 create_temp_database <- function(conn) {
 
   create_db_query <- paste0("CREATE DATABASE IF NOT EXISTS ", conn@MoJdetails$temp_db_name)
@@ -34,24 +52,15 @@ get_staging_dir_from_userid <- function(user_id) {
 prepare_statement <- function(conn, statement) {
   # check if the special string is present
   if (stringr::str_detect(statement, "__temp__")) {
-    # check if the conn object already knows the db exists
-    if (!isTRUE(conn@MoJdetails$temp_db_exists)) {
-      # get all schemas and create the temp database if the temp db is not in that list
-      all_schemas <- dbGetQuery(conn, "show schemas")
-      exists <- conn@MoJdetails$temp_db_name %in% all_schemas[,1][[1]]
-      if (isFALSE(exists)) create_temp_database(conn)
-      else conn@MoJdetails$temp_db_exists <- TRUE # set this to avoid all this checking next time
-    }
-
     # replace __temp__ with the temp db name
-    statement <- stringr::str_replace_all(statement, "__temp__", conn@MoJdetails$temp_db_name)
+    statement <- stringr::str_replace_all(statement, "__temp__", athena_temp_db(conn))
   }
   return(statement)
 }
 
 # as above, but for names we don't need to create the database if it already exists
 prepare_name <- function(conn, name) {
-  stringr::str_replace_all(name, "__temp__", conn@MoJdetails$temp_db_name)
+  stringr::str_replace_all(name, "__temp__", athena_temp_db(conn, check_exists = FALSE))
 }
 
 
