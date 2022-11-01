@@ -36,6 +36,7 @@ To query a database, use:
 
 ```
 library(Rdbtools)
+library(DBI)
 con <- connect_athena() # creates a connection with sensible defaults
 data <- dbGetQuery(con, "SELECT * FROM database.table") # queries and puts data in R environment
 dbDisconnect(con) # disconnects the connection
@@ -48,6 +49,7 @@ This works with both the noctua functions (which are updated in this package for
 
 ```
 library(Rdbtools)
+library(DBI)
 con <- connect_athena() # creates a connection with sensible defaults
 dbExecute(con, "CREATE TABLE __temp__.name AS SELECT * FROM database.table") # queries and puts in temp space
 data <- dbGetQuery(con, "SELECT * FROM __temp__.name") # queries and puts data in R environment
@@ -85,6 +87,7 @@ As an example:
 library(tidyverse)
 library(dbplyr)
 library(Rdbtools)
+library(DBI) 
 
 con <- connect_athena()
 datadb <- tbl(con, sql("select * from database.name")) # create the dbplyr link
