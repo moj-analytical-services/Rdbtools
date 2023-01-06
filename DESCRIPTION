@@ -27,6 +27,7 @@ Imports:
     purrr,
     rlang
 Collate: 
+    'Rdbtools-package.R'
     'Rdbtools.R'
     'athena_connection.R'
     'credentials.R'
