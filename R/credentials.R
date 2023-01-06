@@ -31,7 +31,7 @@ get_athena_credentials <- function(aws_region = NULL,
     )},
     error = function(e){
       rlang::abort(c("Something went wrong getting temporary credentials",
-                     "*" = e))
+                     "*" = paste(e)))
     }
   )
 
