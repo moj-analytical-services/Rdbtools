@@ -1,12 +1,11 @@
 
-#' @include Rdbtools.R
-
 # This extends the AthenaConnection S4 class defined by noctua to
 # be a class we can use in MoJ. This has two effects, one is to add
 # a slot with extra details (MoJdetails) and the other is that it
 # lets us define a new set of methods for the MoJAthenaConnection
 # objects - these new methods can be calls to the AthenaConnection
 # methods (which work by inheritance) but with some pre-processing.
+#' @importClassesFrom noctua AthenaConnection
 setClass(
   "MoJAthenaConnection",
   contains="AthenaConnection",
@@ -99,7 +98,7 @@ connect_athena <- function(aws_region = NULL,
 
     # connect to athena
     # returns an AthenaConnection object, see noctua docs for details
-    con <- dbConnect(noctua::athena(),
+    con <- DBI::dbConnect(noctua::athena(),
                      region_name = aws_region,
                      s3_staging_dir = staging_dir,
                      rstudio_conn_tab = rstudio_conn_tab,
@@ -123,7 +122,7 @@ connect_athena <- function(aws_region = NULL,
 
     # connect to athena
     # returns an AthenaConnection object, see noctua docs for details
-    con <- dbConnect(noctua::athena(),
+    con <- DBI::dbConnect(noctua::athena(),
                      region_name = aws_region,
                      s3_staging_dir = staging_dir,
                      rstudio_conn_tab = rstudio_conn_tab)

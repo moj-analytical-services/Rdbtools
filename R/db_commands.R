@@ -1,5 +1,4 @@
 
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # Define the methods to use on MoJAthenaConnection objects so that the
 # __temp__ database gets replaced with the appropriate string
@@ -15,6 +14,7 @@
 #' in the statement with your temporary database in Athena. Your temporary database will be created
 #' if you do not already have one.
 #'
+#' @importMethodsFrom noctua dbGetQuery
 #' @inheritParams noctua::dbGetQuery
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetQuery
@@ -36,6 +36,7 @@ setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
 #' in the statement with your temporary database in Athena. Your temporary database will be created
 #' if you do not already have one.
 #'
+#' @importMethodsFrom noctua dbExecute
 #' @inheritParams noctua::Query
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbExecute
@@ -55,6 +56,7 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
 #' See [noctua::dbGetTables()]. This function calls `noctua::dbGetTables()` but if
 #' the schema argument is `__temp__` then it looks at your temporary database in Athena.
 #'
+#' @importMethodsFrom noctua dbGetTables
 #' @inheritParams noctua::dbGetTables
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetTables
@@ -74,6 +76,7 @@ setMethod("dbGetTables", "MoJAthenaConnection",
 #' See [noctua::dbListTables()]. This function calls `noctua::dbListTables()` but if
 #' the schema argument is `__temp__` then it looks at your temporary database in Athena.
 #'
+#' @importMethodsFrom noctua dbListTables
 #' @inheritParams noctua::dbListTables
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbListTables
@@ -93,6 +96,7 @@ setMethod("dbListTables", "MoJAthenaConnection",
 #' See [noctua::dbExistsTable()]. This function calls noctua::dbExistsTable(), after replacing any references to `__temp__`
 #' in the name argument with your temporary database in Athena.
 #'
+#' @importMethodsFrom noctua dbExistsTable
 #' @inheritParams noctua::dbExistsTable
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbExistsTable
@@ -112,6 +116,7 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
 #' See [noctua::dbListFields()]. This function calls `noctua::dbListFields()`, after replacing any references to `__temp__`
 #' in the name argument with your temporary database in Athena.
 #'
+#' @importMethodsFrom noctua dbListFields
 #' @inheritParams noctua::dbListFields
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbListFields
@@ -131,6 +136,7 @@ setMethod("dbListFields", c("MoJAthenaConnection","character"),
 #' See [noctua::dbRemoveTable()]. This function calls `noctua::dbRemoveTable()`, after replacing any references to `__temp__`
 #' in the names argument with your temporary database in Athena.
 #'
+#' @importMethodsFrom noctua dbRemoveTable
 #' @inheritParams noctua::dbRemoveTable
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbRemoveTable
@@ -158,6 +164,7 @@ setMethod("dbRemoveTable", c("MoJAthenaConnection","character"),
 #' in the statement with your temporary database in Athena. Your temporary database will be created
 #' if you do not already have one.
 #'
+#' @importMethodsFrom noctua dbWriteTable
 #' @inheritParams noctua::AthenaWriteTables
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @examples

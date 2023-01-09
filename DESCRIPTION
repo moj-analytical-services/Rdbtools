@@ -2,15 +2,12 @@ Package: Rdbtools
 Title: Connects the MoJ Analytical Platform to Athena
 Version: 0.2.0
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
-License: Apache License (>= 2)
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports:
@@ -25,9 +22,10 @@ Imports:
     httr,
     readr,
     purrr,
-    rlang
+    rlang,
+    methods
 Collate: 
-    'Rdbtools.R'
+    'Rdbtools-package.R'
     'athena_connection.R'
     'credentials.R'
     'db_commands.R'
