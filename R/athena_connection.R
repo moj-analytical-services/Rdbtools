@@ -1,4 +1,6 @@
 
+#' @include Rdbtools-package.R
+
 # This extends the AthenaConnection S4 class defined by noctua to
 # be a class we can use in MoJ. This has two effects, one is to add
 # a slot with extra details (MoJdetails) and the other is that it

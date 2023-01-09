@@ -1,4 +1,6 @@
 
+#' @include athena_connection.R
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # Define the methods to use on MoJAthenaConnection objects so that the
 # __temp__ database gets replaced with the appropriate string
@@ -14,7 +16,6 @@
 #' in the statement with your temporary database in Athena. Your temporary database will be created
 #' if you do not already have one.
 #'
-#' @importMethodsFrom noctua dbGetQuery
 #' @inheritParams noctua::dbGetQuery
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetQuery
