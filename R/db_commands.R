@@ -1,4 +1,7 @@
 
+#' @importFrom noctua dbDisconnect
+#' @export
+noctua::dbDisconnect
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # Define the methods to use on MoJAthenaConnection objects so that the
