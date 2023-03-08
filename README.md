@@ -116,7 +116,7 @@ In order to run the query successfully, the region need to the region where the 
 
 othewise use `eu-west-1` as the default
 
-In most cases, you do not need to worry about the region, the default region (`AWS_DEFAULT_REGION` and `AWS_REGION`) should be one for running query and the one where your staging dir is.  When there is cross-region situation in your runnning environment and you want to save the time for passing the region every time when creating connection, you can use the `AWS_ATHENA_QUERY_REGION` to specify it. 
+In most cases, you do not need to worry about the region, the default region (`AWS_DEFAULT_REGION` and `AWS_REGION`) should be the one for running query and the one where your staging dir is.  When there is cross-region situation in your runnning environment and you want to save the time for passing the region every time when creating connection, you can use the `AWS_ATHENA_QUERY_REGION` to specify it. 
 
 ### Single queries (deprecated)
 
