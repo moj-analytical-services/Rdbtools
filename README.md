@@ -102,6 +102,22 @@ Note that if you need any function within dbplyr which does a copy (e.g. joining
 then you need to ensure you have the right permissions for the staging directory you are using.
 See the help page for `dbWriteTable` by running `?dbWriteTable` in the console.
 
+### The region argument when creating connection object
+
+The region passed into the connect_athena() will be used for 
+- Get temporary token for connecting athena service
+- Run the query and store the query result to the staging dir
+
+In order to run the query successfully, the region need to the region where the query will be run and query result will be stored in the staging dir. You can pass the value based on your case when calling connect_athena(), by default, the region will be decided based on serveral environment variables below:
+
+- `AWS_ATHENA_QUERY_REGION`: An environment variable for specifying the region when the region where the query will be run is different from the default region from underlying running environment.
+
+- `AWS_DEFAULT_REGION` and `AWS_REGION`: The default region which usually will be setup by the underlying running environment e.g. cluster, and they cannot be amended
+
+othewise use `eu-west-1` as the default
+
+In most cases, you do not need to worry about the region, the default region (`AWS_DEFAULT_REGION` and `AWS_REGION`) should be the one for running query and the one where your staging dir is.  When there is cross-region situation in your runnning environment and you want to save the time for passing the region every time when creating connection, you can use the `AWS_ATHENA_QUERY_REGION` to specify it. 
+
 ### Single queries (deprecated)
 
 The function `read_sql` is provided which replicates the same function from `dbtools` - this is kept for backwards compatibility only.
