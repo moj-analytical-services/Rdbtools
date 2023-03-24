@@ -8,7 +8,7 @@ connect_athena(
   aws_region = NULL,
   staging_dir = NULL,
   rstudio_conn_tab = FALSE,
-  session_duration = 3600,
+  session_duration = 3600L,
   role_session_name = NULL,
   ...
 )
