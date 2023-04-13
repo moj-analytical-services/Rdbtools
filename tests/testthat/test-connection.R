@@ -1,6 +1,5 @@
 
-user_staging_dir <- rstudioapi::showPrompt("Bucket with write access",
-                                           "Please specify a bucket on the AP that you have write access to. This will be used as the staging dir for these tests.")
+user_staging_dir <- "s3://alpha-everyone/Rdbtools/test/"
 
 test_reconnection <- rstudioapi::showPrompt("Test reconnection",
                                             "Do you want to wait 15 mins to test the reconnection function? (y/N)",
