@@ -10,6 +10,7 @@ connect_athena(
   rstudio_conn_tab = FALSE,
   session_duration = 3600,
   role_session_name = NULL,
+  schema_name = "default",
   ...
 )
 }
@@ -23,6 +24,8 @@ connect_athena(
 \item{session_duration}{The number of seconds which the session should last before needing new authentication. Minimum of 900.}
 
 \item{role_session_name}{This is a parameter for authentication, and should be left to NULL in normal operation.}
+
+\item{schema_name}{This is the default database that tables not specifying a database will be looked in. If this is set to the string "\strong{temp}" then it will use (and create if required) the temporary database based on your username - this is useful for using dbplyr which does not understand the \strong{temp} keyword, alongside the DBI commands.}
 }
 \description{
 Creates a connection object which permits the user to interact with the

@@ -29,6 +29,7 @@ setClass(
 #' @param rstudio_conn_tab Set this to true to show this connection in you RStudio connections frame (warning: this takes a long time to load because of the number of databases in the AP's Athena)
 #' @param session_duration The number of seconds which the session should last before needing new authentication. Minimum of 900.
 #' @param role_session_name This is a parameter for authentication, and should be left to NULL in normal operation.
+#' @param schema_name This is the default database that tables not specifying a database will be looked in. If this is set to the string "__temp__" then it will use (and create if required) the temporary database based on your username - this is useful for using dbplyr which does not understand the __temp__ keyword, alongside the DBI commands.
 #'
 #' @examples
 #'  con <- connect_athena() # creates a connection with sensible defaults
@@ -165,6 +166,7 @@ connect_athena <- function(aws_region = NULL,
   con@MoJdetails$temp_db_name <- temp_db_name
   con@MoJdetails$temp_db_exists <- NA # Don't know if the temp db exists yet
 
+  # this checks that the temp database exists if it is set as the default db
   if (schema_name == "__temp__") {
     result <- athena_temp_db(con, check_exists = TRUE)
   }
