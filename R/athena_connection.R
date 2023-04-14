@@ -42,6 +42,7 @@ connect_athena <- function(aws_region = NULL,
                            rstudio_conn_tab = FALSE,
                            session_duration = 3600,
                            role_session_name = NULL,
+                           schema_name = "default",
                            ...
 ) {
 
@@ -97,6 +98,15 @@ connect_athena <- function(aws_region = NULL,
       staging_dir = get_staging_dir_from_userid(user_id)
     }
 
+    # this works out the temp db name from the user id
+    temp_db_name <- get_database_name_from_userid(user_id)
+
+    if (schema_name == "__temp__") {
+      schema_name_set <- temp_db_name
+    } else {
+      schema_name_set <- schema_name
+    }
+
     # connect to athena
     # returns an AthenaConnection object, see noctua docs for details
     con <- dbConnect(noctua::athena(),
@@ -106,6 +116,7 @@ connect_athena <- function(aws_region = NULL,
                      aws_access_key_id = credentials$AccessKeyId,
                      aws_secret_access_key = credentials$SecretAccessKey,
                      aws_session_token = credentials$SessionToken,
+                     schema_name = schema_name_set,
                      ...)
   } else {
 
@@ -121,17 +132,25 @@ connect_athena <- function(aws_region = NULL,
       staging_dir = get_staging_dir_from_userid(user_id)
     }
 
+    # this works out the temp db name from the user id
+    temp_db_name <- get_database_name_from_userid(user_id)
+
+    if (schema_name == "__temp__") {
+      schema_name_set <- temp_db_name
+    } else {
+      schema_name_set <- schema_name
+    }
+
     # connect to athena
     # returns an AthenaConnection object, see noctua docs for details
     con <- dbConnect(noctua::athena(),
                      region_name = aws_region,
                      s3_staging_dir = staging_dir,
-                     rstudio_conn_tab = rstudio_conn_tab)
+                     rstudio_conn_tab = rstudio_conn_tab,
+                     schema_name = schema_name,
+                     ...)
 
   }
-
-  # this works out the temp db name from the user id
-  temp_db_name <- get_database_name_from_userid(user_id)
 
   # coerce the AthenaConnection object to be a MoJAthenaConnection object
   # this just adds the slot MoJdetails, as defined in setClass above
@@ -145,6 +164,10 @@ connect_athena <- function(aws_region = NULL,
   con@MoJdetails$session_duration_set <- session_duration
   con@MoJdetails$temp_db_name <- temp_db_name
   con@MoJdetails$temp_db_exists <- NA # Don't know if the temp db exists yet
+
+  if (schema_name == "__temp__") {
+    result <- athena_temp_db(con, check_exists = TRUE)
+  }
 
   return(con)
 
