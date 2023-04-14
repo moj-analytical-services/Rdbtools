@@ -22,14 +22,16 @@ setClass(
 #' methods from noctua's AthenaConnection class, which in turn are DBI
 #' methods.
 #' In general the expected usage is to run the function with no arguments to
-#' get a standard database connection, which should work for most purposes.
+#' get a standard database connection, which should work for most basic data
+#' access purposes.
 #'
 #' @param aws_region This is the region where the database is held. If unset or NULL then will default to the AP's region.
 #' @param staging_dir This the s3 location where outputs of queries can be held. If unset or NULL then will default to a session specific temporary dir.
 #' @param rstudio_conn_tab Set this to true to show this connection in you RStudio connections frame (warning: this takes a long time to load because of the number of databases in the AP's Athena)
 #' @param session_duration The number of seconds which the session should last before needing new authentication. Minimum of 900.
 #' @param role_session_name This is a parameter for authentication, and should be left to NULL in normal operation.
-#' @param schema_name This is the default database that tables not specifying a database will be looked in. If this is set to the string "__temp__" then it will use (and create if required) the temporary database based on your username - this is useful for using dbplyr which does not understand the __temp__ keyword, alongside the DBI commands.
+#' @param schema_name This is the default database that tables not specifying a database will be looked in. If this is set to the string `__temp__` then it will use (and create if required) the temporary database based on your username - this is useful for using dbplyr which does not understand the `__temp__` keyword, alongside the DBI commands.
+#' @param ... Other agruments passed to `dbConnect`
 #'
 #' @examples
 #'  con <- connect_athena() # creates a connection with sensible defaults
