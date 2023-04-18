@@ -10,6 +10,7 @@ connect_athena(
   rstudio_conn_tab = FALSE,
   session_duration = 3600,
   role_session_name = NULL,
+  schema_name = "default",
   ...
 )
 }
@@ -23,6 +24,10 @@ connect_athena(
 \item{session_duration}{The number of seconds which the session should last before needing new authentication. Minimum of 900.}
 
 \item{role_session_name}{This is a parameter for authentication, and should be left to NULL in normal operation.}
+
+\item{schema_name}{This is the default database that tables not specifying a database will be looked in. If this is set to the string \verb{__temp__} then it will use (and create if required) the temporary database based on your username - this is useful for using dbplyr which does not understand the \verb{__temp__} keyword, alongside the DBI commands.}
+
+\item{...}{Other agruments passed to \code{dbConnect}}
 }
 \description{
 Creates a connection object which permits the user to interact with the
@@ -32,7 +37,8 @@ This returns an object with class MoJAthenaConnection, which inherits
 methods from noctua's AthenaConnection class, which in turn are DBI
 methods.
 In general the expected usage is to run the function with no arguments to
-get a standard database connection, which should work for most purposes.
+get a standard database connection, which should work for most basic data
+access purposes.
 }
 \examples{
  con <- connect_athena() # creates a connection with sensible defaults

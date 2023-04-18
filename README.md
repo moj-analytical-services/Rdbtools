@@ -28,7 +28,9 @@ You can use the same command to update the package, if it is changed on Github l
 
 ## How to use
 
-### Connecting a session and querying
+### Basic connecting a session and querying
+
+#### With SQL commands (using DBI)
 
 See https://dyfanjones.github.io/noctua/reference/index.html for the full list of functions you can call to interact with Athena.
 
@@ -41,42 +43,7 @@ data <- dbGetQuery(con, "SELECT * FROM database.table") # queries and puts data 
 dbDisconnect(con) # disconnects the connection
 ```
 
-### The temporary database
-
-Wherever you put the special string `__temp__` then this will refer to a database which is specific to your user and where you can write temporary tables before you read them out.
-This works with both the noctua functions (which are updated in this package for connections made via `connect_athena()`) and the convenience functions (e.g. `read_sql()`).
-
-```
-library(Rdbtools)
-con <- connect_athena() # creates a connection with sensible defaults
-dbExecute(con, "CREATE TABLE __temp__.name AS SELECT * FROM database.table") # queries and puts in temp space
-data <- dbGetQuery(con, "SELECT * FROM __temp__.name") # queries and puts data in R environment
-dbDisconnect(con) # disconnects the connection
-```
-
-The `__temp__` string substitution is implemented for:
-
- + dbGetQuery
- + dbExecute
- + dbGetTables
- + dbListTables
- + dbExistsTable
- + dbListFields
- + dbRemoveTable
- + dbWriteTable (but note the permission issue in the help for this function by running `?dbWriteTable` in the console)
-
-If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
-
-Additionally, the `athena_temp_db` function will return a string with the name of the temporary database if required to create specific SQL commands, or in use in other functions not listed above.
-
-### The connection object
-
-The connection object returned by `connect_athena()` contains all the information about a single authenticated session which allows access to the databases for which you have permission.
-By default the authenticated session will last for one hour, after which you will have to create a new connection or else refresh your connection.
-For most purposes creating a new connection will be sufficient, however you will lose access to any tables created in the `__temp__` database (as these are only accessible under the same session).
-To refresh a connection, please use the `refresh_athena_connection()` function, or in a long script the `refresh_if_expired()` function may also be useful (see the help pages in RStudio for further details of these functions).
-
-### Using dbplyr
+#### Using dbplyr
 
 See https://dbplyr.tidyverse.org/index.html
 
@@ -102,6 +69,61 @@ Note that if you need any function within dbplyr which does a copy (e.g. joining
 then you need to ensure you have the right permissions for the staging directory you are using.
 See the help page for `dbWriteTable` by running `?dbWriteTable` in the console.
 
+### The temporary database
+
+Each user can have a database which can store temporary tables.
+
+Note that the tables created here will have their underlying data stored in the default staging directory
+(which is different for each new connection) or that specified by the staging directory argument 
+(which will remain the same for each new connection).
+The permissions of the staging directory will determine who can access the data in the temporary tables.
+
+#### With SQL commands (using DBI)
+
+Wherever you put the special string `__temp__` in SQL commands then this will refer to a database which is specific to your user and where you can write temporary tables before you read them out.
+This works with the DBI functions (which are updated in this package for connections made via `connect_athena()`) and the convenience functions (e.g. `read_sql()`).
+
+```
+library(Rdbtools)
+con <- connect_athena() # creates a connection with sensible defaults
+dbExecute(con, "CREATE TABLE __temp__.name AS SELECT * FROM database.table") # queries and puts in temp space
+data <- dbGetQuery(con, "SELECT * FROM __temp__.name") # queries and puts data in R environment
+dbDisconnect(con) # disconnects the connection
+```
+
+The `__temp__` string substitution is implemented for:
+
+ + dbGetQuery
+ + dbExecute
+ + dbGetTables
+ + dbListTables
+ + dbExistsTable
+ + dbListFields
+ + dbRemoveTable
+ + dbWriteTable (but note the permission issue in the help for this function by running `?dbWriteTable` in the console)
+
+If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
+
+#### Using dbplyr (or other packages)
+
+The `__temp__` string is not understood by dbplyr functions, so to use the temporary database for this or other packages you have two options:
+
+ + When creating the connection, you can specify the temporary database as the default schema: `connect_athena(schema_name = "__temp__")`. In this case dbplyr commands which do not specify a database will default to the temporary database (e.g. then `compute("temp_tbl"))` at the end of a dbplyr chain will create a table in the temporary database with the name "temp_tbl").
+ + Alternatively, the `athena_temp_db` function will return a string with the name of the temporary database if required to manually create specific SQL commands, or in use in other functions not listed above.
+ 
+The temporary database is the same each way, so you can mix dbplyr, DBI, and other packages in the same code.
+
+## Advanced use
+
+### The connection object
+
+The connection object returned by `connect_athena()` contains all the information about a single authenticated session which allows access to the databases for which you have permission.
+By default the authenticated session will last for one hour, after which you will have to create a new connection or else refresh your connection.
+For most purposes creating a new connection will be sufficient, however you will lose access to any tables created in the `__temp__` database (as these are only accessible under the same session).
+To refresh a connection, please use the `refresh_athena_connection()` function, or in a long script the `refresh_if_expired()` function may also be useful (see the help pages in RStudio for further details of these functions).
+
+
+
 ### The region argument when creating connection object
 
 The region passed into the connect_athena() will be used for 
@@ -118,7 +140,7 @@ othewise use `eu-west-1` as the default
 
 In most cases, you do not need to worry about the region, the default region (`AWS_DEFAULT_REGION` and `AWS_REGION`) should be the one for running query and the one where your staging dir is.  When there is cross-region situation in your runnning environment and you want to save the time for passing the region every time when creating connection, you can use the `AWS_ATHENA_QUERY_REGION` to specify it. 
 
-### Single queries (deprecated)
+## Single queries (deprecated)
 
 The function `read_sql` is provided which replicates the same function from `dbtools` - this is kept for backwards compatibility only.
 This creates a database connection, reads the data and then closes the connection every call.
