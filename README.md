@@ -19,7 +19,7 @@ The key difference with this package over `dbtools` is that it is implemented al
 
 ## Installing Rdbtools
 
-Then install laload with one of the the following commands:
+Then install Rdbtools with one of the the following commands:
 
  - If using renv: `renv::install("moj-analytical-services/Rdbtools")`
  - If not using renv: `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
