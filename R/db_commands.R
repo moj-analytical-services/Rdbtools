@@ -106,17 +106,29 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
             # prepare the statement
             name <- prepare_name(conn, name)
             # run the query using the noctua function
+            # however, the error returned from AWS has changed, but we cannot
+            # update noctua to a version which deals with this because of a
+            # permission conflict
+            # So reduce the number of retries to 1
+            actual_retry_setting <- noctua:::athena_option_env$retry
             noctua_options(retry = 1)
+            # capture.output avoids printing an error which we are handling anyway
             cnd <- capture.output(
-            resp <- rlang::try_fetch(getMethod("dbExistsTable", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, ...),
-                             error = function(cnd) {
-                               #browser()
-                               if (grepl("EntityNotFoundException", cnd$message)) return(FALSE)
-                               else return(cnd)
-                             }
-            ),
-            type = "message")
-            noctua_options(retry = 5)
+              # this tries the notcua function, and handles the error
+              resp <- rlang::try_fetch(getMethod("dbExistsTable", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, ...),
+                                       error = function(cnd) {
+                                         # This is the error which indicates the table doesn't exist
+                                         if (grepl("EntityNotFoundException", cnd$message)) return(FALSE)
+                                         # all other errors are returned (cannot abort here because the capture.output kills it)
+                                         else return(cnd)
+                                       }
+              ),
+              type = "message")
+
+            # abort if the above has returned an error
+            if (inherits(resp, "error")) rlang::abort("Error in dbExistsTable response.", parent = resp)
+            # put the retries back
+            noctua_options(retry = actual_retry_setting)
             return(resp)
           }
 )
