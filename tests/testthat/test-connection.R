@@ -8,8 +8,8 @@ test_reconnection <- rstudioapi::showPrompt("Test reconnection",
 ath_con <- connect_athena(staging_dir = user_staging_dir,
                           session_duration = 900)
 
-df <- data.frame(a = c(1,2,3),
-                 b = c("a", "b", "c"))
+df <- data.frame(a = c("a", "b", "c"),
+                 b = round(runif(3)*100))
 
 
 

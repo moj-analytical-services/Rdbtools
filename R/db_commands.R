@@ -106,7 +106,18 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
             # prepare the statement
             name <- prepare_name(conn, name)
             # run the query using the noctua function
-            getMethod("dbExistsTable", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, ...)
+            noctua_options(retry = 1)
+            cnd <- capture.output(
+            resp <- rlang::try_fetch(getMethod("dbExistsTable", c("AthenaConnection","character"), asNamespace("noctua"))(conn, name, ...),
+                             error = function(cnd) {
+                               #browser()
+                               if (grepl("EntityNotFoundException", cnd$message)) return(FALSE)
+                               else return(cnd)
+                             }
+            ),
+            type = "message")
+            noctua_options(retry = 5)
+            return(resp)
           }
 )
 
