@@ -125,10 +125,11 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
               ),
               type = "message")
 
-            # abort if the above has returned an error
-            if (inherits(resp, "error")) rlang::abort("Error in dbExistsTable response.", parent = resp)
             # put the retries back
             noctua_options(retry = actual_retry_setting)
+                    
+            # abort if the above has returned an error
+            if (inherits(resp, "error")) rlang::abort("Error in dbExistsTable response.", parent = resp)
             return(resp)
           }
 )
