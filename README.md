@@ -21,8 +21,12 @@ The key difference with this package over `dbtools` is that it is implemented al
 
 Then install Rdbtools with one of the the following commands:
 
- - If using renv: `renv::install("moj-analytical-services/Rdbtools")`
- - If not using renv: `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
+ - If using renv:
+     - first install the version of `noctua` required: `renv::install("noctua@2.6.1")`
+     - then install `Rdbtools` itself: `renv::install("moj-analytical-services/Rdbtools")`
+ - If not using renv:
+     - check that you have `noctua` version 2.6.1 installed, and install it if not
+     - then install `Rdbtools` itself : `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
 
 You can use the same command to update the package, if it is changed on Github later.
 
