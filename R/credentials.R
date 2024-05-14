@@ -1,4 +1,9 @@
 
+#' get_athena_credentials
+#'
+#' Gets temporary credentials for an AWS service
+#'
+#' @export
 get_athena_credentials <- function(aws_region = NULL,
                                    session_duration = 3600L,
                                    role_session_name = NULL) {

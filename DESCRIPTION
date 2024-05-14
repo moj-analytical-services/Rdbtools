@@ -1,6 +1,6 @@
 Package: Rdbtools
 Title: Connects the MoJ Analytical Platform to Athena
-Version: 0.4.2
+Version: 0.5.0
 Authors@R: 
     person(given = "First",
            family = "Last",
@@ -12,13 +12,13 @@ License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports:
     DBI,
     noctua,
     magrittr,
     vroom,
-    paws,
+    paws (>= 0.5.0),
     stringr,
     readr,
     lubridate,
