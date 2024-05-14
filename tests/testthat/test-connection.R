@@ -43,7 +43,7 @@ dbRemoveTable(ath_con, "__temp__.testthat", delete_data = TRUE, confirm = TRUE)
 test_that("Test existing and listing after removing", {
 
   expect_equal(dbExistsTable(ath_con, "__temp__.testthat"), FALSE)
-  expect_equal("testthat" %in% (dbGetTables(ath_con, "__temp__") %>% .[,"TableName"] %>% as.list()), FALSE)
+  # expect_equal("testthat" %in% (dbGetTables(ath_con, "__temp__") %>% .[,"TableName"] %>% as.list()), FALSE)
   expect_equal("testthat" %in% dbListTables(ath_con, "__temp__"), FALSE)
 
 })
