@@ -56,7 +56,7 @@ connect_athena <- function(aws_region = NULL,
 
   if (nchar(aws_role_arn) > 0 & nchar(aws_web_identity_token_file) > 0) {
 
-    credentials <- get_athena_credentials(aws_region,
+    credentials <- get_aws_credentials(aws_region,
                                           session_duration,
                                           role_session_name)
 

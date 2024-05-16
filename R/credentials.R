@@ -1,12 +1,18 @@
 
-#' get_athena_credentials
+#' get_aws_credentials
 #'
-#' Gets temporary credentials for an AWS service
+#' Gets temporary credentials for an AWS service.
+#'
+#' @param aws_region Default is NULL, which will look for relevant environment variables and if not found set this to be the relevant region for most Analytical Platform users.
+#' @param session_duration The number of seconds which the session should last before needing new authentication. Minimum of 900.
+#' @param role_session_name This is a parameter for authentication, and should be left to NULL in normal operation.
+#' @param ... Further arguments for the `paws` function `assume_role_with_web_identity`
 #'
 #' @export
-get_athena_credentials <- function(aws_region = NULL,
-                                   session_duration = 3600L,
-                                   role_session_name = NULL) {
+get_aws_credentials <- function(aws_region = NULL,
+                                session_duration = 3600L,
+                                role_session_name = NULL,
+                                ...) {
 
   if (is.null(aws_region)) aws_region <- get_region()
 
@@ -27,19 +33,20 @@ get_athena_credentials <- function(aws_region = NULL,
     svc <- paws::sts(config = list(credentials = list(anonymous = TRUE)),
                      region = get_region())
 
-  creds <- svc$assume_role_with_web_identity(
-    DurationSeconds = session_duration,
-    RoleArn = aws_role_arn,
-    RoleSessionName = role_session_name,
-    WebIdentityToken = readr::read_file(aws_web_identity_token_file)
-  )},
-  error = function(e){
-    rlang::abort(c("Something went wrong getting temporary credentials",
-                   "*" = paste(e)))
-  }
+    creds <- svc$assume_role_with_web_identity(
+      DurationSeconds = session_duration,
+      RoleArn = aws_role_arn,
+      RoleSessionName = role_session_name,
+      WebIdentityToken = readr::read_file(aws_web_identity_token_file),
+      ...
+    )},
+    error = function(e){
+      rlang::abort(c("Something went wrong getting temporary credentials",
+                     "*" = paste(e)))
+    }
   )
 
-return(creds)
+  return(creds)
 }
 
 is_auth_within_expiry <- function(con, window = 5 * 60) {
