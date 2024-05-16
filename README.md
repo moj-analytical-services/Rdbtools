@@ -22,21 +22,11 @@ The key difference with this package over `dbtools` is that it is implemented al
 Then install Rdbtools with one of the the following commands:
 
  - If using renv:
-     - first install the version of `noctua` required: `renv::install("noctua@2.6.1")`
-     - then install `Rdbtools` itself: `renv::install("moj-analytical-services/Rdbtools")` or if that doesn't work try `renv::install("git@github.com:moj-analytical-services/Rdbtools.git")`
+     - install `Rdbtools`: `renv::install("moj-analytical-services/Rdbtools")` or if that doesn't work try `renv::install("git@github.com:moj-analytical-services/Rdbtools.git")`
  - If not using renv:
-     - check that you have `noctua` version 2.6.1 installed, and install it if not
-     - then install `Rdbtools` itself : `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
+     - install `Rdbtools`: `devtools::install_github("moj-analytical-services/Rdbtools")` (you may need to install devtools first)
 
 You can use the same command to update the package, if it is changed on Github later.
-
-### Limitations
-
-Currently we have pinned `Rdbtools` to noctua version 2.6.1 because later versions query tables' metadata to check for existence
-and for the S3 storage location - this requires the permission `athena:GetTableMetadata` which is currently not standard on the
-Analytical Platform.
-Currently this does not mean loss of any features, but it may mean that over time the package has to workaround this permission issue
-or else users will need to get the permission added to their account.
 
 ## How to use
 
