@@ -43,7 +43,7 @@ setClass(
 connect_athena <- function(aws_region = NULL,
                            staging_dir = NULL,
                            rstudio_conn_tab = FALSE,
-                           session_duration = 3600,
+                           session_duration = 3600L,
                            role_session_name = NULL,
                            schema_name = "default",
                            ...
@@ -56,49 +56,17 @@ connect_athena <- function(aws_region = NULL,
 
   if (nchar(aws_role_arn) > 0 & nchar(aws_web_identity_token_file) > 0) {
 
-    # Obtain the WebIdentity credentials
-    # ref: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html
-    # Set the arbitrary session name to user plus timestamp
-    user <- stringr::str_split(aws_role_arn, '/')[[1]][2]
-    if (is.null(role_session_name)) role_session_name <- glue::glue("{user}_{as.numeric(Sys.time())}")
-    query = glue::glue(
-      "https://sts.amazonaws.com/",
-      "?Action=AssumeRoleWithWebIdentity",
-      "&DurationSeconds={session_duration}",
-      "&RoleSessionName={role_session_name}",
-      "&RoleArn={aws_role_arn}",
-      "&WebIdentityToken={readr::read_file(aws_web_identity_token_file)}",
-      "&Version=2011-06-15"
-    )
-    response <- httr::POST(query)
+    credentials <- get_aws_credentials(aws_region,
+                                          session_duration,
+                                          role_session_name)
 
-    if (!is.null(httr::content(response)$Error$Message)) rlang::abort(c("Something went wrong getting temporary credentials",
-                                                                        "*" = "The message from https://sts.amazonaws.com/ is:",
-                                                                        "i" = httr::content(response)$Error$Message))
+    authentication_expiry <- as.POSIXct(credentials$Credentials$Expiration, origin = "1970-01-01", tz="UTC")
 
-    credentials <- httr::content(response)$AssumeRoleWithWebIdentityResponse$AssumeRoleWithWebIdentityResult$Credentials
-    #temporary_authentication <- TRUE
-    authentication_expiry <- as.POSIXct(credentials$Expiration, origin = "1970-01-01", tz="UTC")
-
-
-    # Use the WebIdentity credentials to access AWS services
-    sts_svc <- paws::sts(
-      config = list(
-        credentials = list(
-          creds = list(
-            access_key_id = credentials$AccessKeyId,
-            secret_access_key = credentials$SecretAccessKey,
-            session_token = credentials$SessionToken
-          )
-        ),
-        region = aws_region
-      )
-    )
-    user_id <- sts_svc$get_caller_identity()$UserId
+    user_id <- credentials$AssumedRoleUser$AssumedRoleId
 
     # work out what your staging dir should be on the AP if unset
     if (is.null(staging_dir)) {
-      staging_dir = get_staging_dir_from_userid(user_id)
+      staging_dir <- get_staging_dir_from_userid(user_id)
     }
 
     # this works out the temp db name from the user id
@@ -116,9 +84,9 @@ connect_athena <- function(aws_region = NULL,
                      region_name = aws_region,
                      s3_staging_dir = staging_dir,
                      rstudio_conn_tab = rstudio_conn_tab,
-                     aws_access_key_id = credentials$AccessKeyId,
-                     aws_secret_access_key = credentials$SecretAccessKey,
-                     aws_session_token = credentials$SessionToken,
+                     aws_access_key_id = credentials$Credentials$AccessKeyId,
+                     aws_secret_access_key = credentials$Credentials$SecretAccessKey,
+                     aws_session_token = credentials$Credentials$SessionToken,
                      schema_name = schema_name_set,
                      ...)
   } else {

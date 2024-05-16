@@ -57,6 +57,8 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
 #'
 #' See [noctua::dbGetTables()]. This function calls `noctua::dbGetTables()` but if
 #' the schema argument is `__temp__` then it looks at your temporary database in Athena.
+#' NOTE: that the schema is the first argument here, to retain backwards compatibility with previous version of `Rdbtools`.
+#' From `noctua` 2.6.2 the first argument is `catalog`.
 #'
 #' @inheritParams noctua::dbGetTables
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
@@ -68,7 +70,7 @@ setMethod("dbGetTables", "MoJAthenaConnection",
             # prepare the statement
             if (isTRUE(schema == "__temp__")) schema <- conn@MoJdetails$temp_db_name
             # run the query using the noctua function
-            getMethod("dbGetTables", "AthenaConnection", asNamespace("noctua"))(conn, schema, ...)
+            getMethod("dbGetTables", "AthenaConnection", asNamespace("noctua"))(conn, schema = schema, ...)
           }
 )
 
@@ -76,6 +78,8 @@ setMethod("dbGetTables", "MoJAthenaConnection",
 #'
 #' See [noctua::dbListTables()]. This function calls `noctua::dbListTables()` but if
 #' the schema argument is `__temp__` then it looks at your temporary database in Athena.
+#' NOTE: that the schema is the first argument here, to retain backwards compatibility with previous version of `Rdbtools`.
+#' From `noctua` 2.6.2 the first argument is `catalog`.
 #'
 #' @inheritParams noctua::dbListTables
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
@@ -87,7 +91,7 @@ setMethod("dbListTables", "MoJAthenaConnection",
             # prepare the statement
             if (isTRUE(schema == "__temp__")) schema <- conn@MoJdetails$temp_db_name
             # run the query using the noctua function
-            getMethod("dbListTables", "AthenaConnection", asNamespace("noctua"))(conn, schema, ...)
+            getMethod("dbListTables", "AthenaConnection", asNamespace("noctua"))(conn, schema = schema, ...)
           }
 )
 
@@ -127,7 +131,7 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
 
             # put the retries back
             noctua_options(retry = actual_retry_setting)
-                    
+
             # abort if the above has returned an error
             if (inherits(resp, "error")) rlang::abort("Error in dbExistsTable response.", parent = resp)
             return(resp)
