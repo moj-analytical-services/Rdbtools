@@ -31,7 +31,7 @@ get_aws_credentials <- function(aws_region = NULL,
   tryCatch({
     # https://paws-r.github.io/docs/sts/
     svc <- paws::sts(config = list(credentials = list(anonymous = TRUE)),
-                     region = get_region())
+                     region = aws_region)
 
     creds <- svc$assume_role_with_web_identity(
       DurationSeconds = session_duration,
