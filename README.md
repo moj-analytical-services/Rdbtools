@@ -17,7 +17,7 @@ The secondary purpose of this package is to provide backwards compatability with
 For this the package provides a few convenience functions for MoJ users.
 The key difference with this package over `dbtools` is that it is implemented all in R and doesn't require a Python dependency.
 
-### Installing Rdbtools
+# Installing Rdbtools
 
 Then install Rdbtools with one of the the following commands:
 
@@ -28,11 +28,18 @@ Then install Rdbtools with one of the the following commands:
 
 You can use the same command to update the package, if it is changed on Github later.
 
-## How to use
+## Troubleshooting installation
 
-### Basic connecting a session and querying
+`Rdbtools` requires recent versions of some of the underlying packages to function (e.g. `paws` and `noctua`).
+If you get errors during installation, or `connect_athena` always returns an error saying "Something went wrong getting temporary credentials" then first try updating the CRAN mirror being used with the following command on the R console:
 
-#### With SQL commands (using DBI)
+`options(repos = list(CRAN = "https://packagemanager.posit.co/cran/latest"))`
+
+# How to use Rdbtools
+
+## Basic connecting a session and querying
+
+### With SQL commands (using DBI)
 
 See https://dyfanjones.github.io/noctua/reference/index.html for the full list of functions you can call to interact with Athena.
 
@@ -45,7 +52,7 @@ data <- dbGetQuery(con, "SELECT * FROM database.table") # queries and puts data 
 dbDisconnect(con) # disconnects the connection
 ```
 
-#### Using dbplyr
+### Using dbplyr
 
 See https://dbplyr.tidyverse.org/index.html
 
@@ -71,7 +78,7 @@ Note that if you need any function within dbplyr which does a copy (e.g. joining
 then you need to ensure you have the right permissions for the staging directory you are using.
 See the help page for `dbWriteTable` by running `?dbWriteTable` in the console.
 
-### The temporary database
+## The temporary database
 
 Each user can have a database which can store temporary tables.
 
@@ -80,7 +87,7 @@ Note that the tables created here will have their underlying data stored in the 
 (which will remain the same for each new connection).
 The permissions of the staging directory will determine who can access the data in the temporary tables.
 
-#### With SQL commands (using DBI)
+### With SQL commands (using DBI)
 
 Wherever you put the special string `__temp__` in SQL commands then this will refer to a database which is specific to your user and where you can write temporary tables before you read them out.
 This works with the DBI functions (which are updated in this package for connections made via `connect_athena()`) and the convenience functions (e.g. `read_sql()`).
@@ -106,7 +113,7 @@ The `__temp__` string substitution is implemented for:
 
 If there are further noctua/DBI function where the `__temp__` string substitution would be useful then open up an issue or pull request and the Rdbtools community can try and arrange an implementation.
 
-#### Using dbplyr (or other packages)
+### Using dbplyr (or other packages)
 
 The `__temp__` string is not understood by dbplyr functions, so to use the temporary database for this or other packages you have two options:
 
