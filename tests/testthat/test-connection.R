@@ -48,13 +48,17 @@ test_that("Test existing and listing after removing", {
 
 })
 
+# Write the test data again
+dbWriteTable(ath_con,
+             "__temp__.testthat",
+             df,
+             overwrite = TRUE)
 
-
-test_that("Test queries after timeout", {
+test_that("Test queries after waiting for credentials to expire", {
 
   skip_if(tolower(test_reconnection) != "y")
 
-  # This block handle waiting the right amount of time, and prints progress
+  # This block handles waiting the right amount of time, and prints progress
   start_bar <- Sys.time()
   expiry_t <- ath_con@MoJdetails$authentication_expiry %>% lubridate::ymd_hms()
   expiry_t_string <- format(expiry_t, format = "%H:%M")
@@ -81,9 +85,22 @@ test_that("Test queries after timeout", {
   # should be an error because we've passed the authentication expiry
   expect_error(dbExistsTable(ath_con, "__temp__.testthat"))
 
+})
+
+test_that("Test queries after refreshing credentials", {
+
   # refresh and then it should work
   refresh_athena_connection(ath_con)
-  expect_equal(dbExistsTable(ath_con, "__temp__.testthat"), FALSE)
+  expect_equal(dbExistsTable(ath_con, "__temp__.testthat"), TRUE)
+
+  dbWriteTable(ath_con,
+               "__temp__.testthat",
+               df,
+               append = TRUE)
+
+  df_return_double <- dbGetQuery(ath_con, "SELECT * FROM __temp__.testthat")
+
+  expect_equal(df_return_double, rbind(df,df), ignore_attr = TRUE)
 
 })
 
