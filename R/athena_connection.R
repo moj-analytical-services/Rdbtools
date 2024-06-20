@@ -62,7 +62,9 @@ connect_athena <- function(aws_region = NULL,
 
     authentication_expiry <- as.POSIXct(credentials$Credentials$Expiration, origin = "1970-01-01", tz="UTC")
 
+    # Get the roles assumed
     user_id <- credentials$AssumedRoleUser$AssumedRoleId
+    role_session_name <- strsplit(user_id, ":")[[1]][[2]]
 
     # work out what your staging dir should be on the AP if unset
     if (is.null(staging_dir)) {
