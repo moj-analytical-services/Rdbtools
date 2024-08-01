@@ -1,0 +1,202 @@
+# Maintaining Rdbtools
+
+## Goal of package
+
+The goal of `Rdbtools` is to provide an R-native package which allows users
+of the MoJ Analytical Platform to access data on AWS Athena without having to
+understand any underlying authentication issues.
+It also provides a way for users to easily create tables in a temporary database 
+(which is useful when they otherwise only have read-only access to managed
+databases).
+
+By being R-native this allows users to interact with their data on Athena either
+by using `DBI` commands or using `dbplyr`.
+
+## Design
+
+`Rdbtools` is an extension of the package `noctua` 
+(https://github.com/DyfanJones/noctua/).
+`Rdbtools` creates a new S4 class called `MoJAthenaConnection` which inherits
+from the S4 class `AthenaConnection` which is defined in `noctua`.
+This in turn is powered by the `DBI` package (https://dbi.r-dbi.org/).
+
+`Rdbtools` then provides an easy way to create a new connection object.
+It also provides methods which act on `MoJAthenaConnection` objects, but really
+it is just doing some intermediate steps and then passing the arguments on to
+`noctua` to process them as though they were `AthenaConnection` objects.
+
+Authentication with the AP uses the package `paws` 
+(https://github.com/paws-r/paws) although in previous versions of `Rdbtools`
+the authentication was done using a direct API request using `curl` (as 
+described in the AWS documentation).
+
+To understand what an S4 class is then the following online book might be 
+useful: [Advanced R](https://adv-r.hadley.nz/s4.html)
+
+## Basic maintainence
+
+Once the package is cloned from github on your RStudio instance then you will
+need to run the following commands to get the package to run:
+
+```
+install.packages("renv")
+renv::install()
+```
+
+(see Note on renv in package maintainence why this is required)
+
+For debugging errors that users report then usually finding out what versions
+of `paws`, `noctua` and `DBI` they are using is sufficient to then use `renv` 
+to remove those packages and install the same versions as the user.
+This will allow you to work out if changes in those packages is causing the
+error - although usually the best solution is just to get the affected user
+to upgrade their packages to the most recent versions.
+
+### Unit testing
+
+`testthat` is used for unit testing - the unit tests currently just check
+that a connection object can be made, and that 
+
+### Note on renv in package maintainence
+
+Do not initialise renv for the repository in which this package sits - this
+is bad because users who 
+
+The above two commands will set up your system in broadly the same way as a new 
+user who installs the package - this is probably what you want for adding new
+features.
+It will also allow you to spot when breaking changes occur with the upstream
+packages.
+If specific package versions are required, these should be set in the 
+DESCRIPTION file so these are picked up during installation by users.
+
+### Package contents
+
+The following describes what is in each file in the `R` folder.
+
+#### athena_connection.R
+
++ Defines the `MoJAthenaConnection` class - which is nothing other than the
+`AthenaConnection` but with a new slot which hold the MoJ-specific information
+which makes the connection work.
+  + Note that this new slot (called `MoJdetails`) is an environment.
+  This means that if you update the value of any of the variables contained
+  within it in one place (e.g. within a function) then this will get picked up
+  everywhere else, without having to supply a new version of the connection 
+  object.
+  This is how refreshing the connection works (see below).
++ Provides a convenience function which allows users to create a connection
+object with this new class: `Rdbtools::connect_athena()`.  This is a sensible
+set of defaults so that most users should be able to simply call the function
+with no arguments and get a connection which works.
+  + There are two authentication methods here (both using `paws`). Most users
+  will have environment variables `AWS_ROLE_ARN` and
+  `AWS_WEB_IDENTITY_TOKEN_FILE` set automatically by the AP and therefore
+  authenticate using the AssumeRoleWithWebIdenity method described in the [AWS
+  documentation here](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html).
+  However the second branch of the `if/else` has a fallback method in case these
+  environment variables are not set (in the past this has been required for
+  apps - however I do not know how much the fallback is now used). The fallback
+  just lets `paws` choose how to authenticate on its own.
+  + In both cases we authenticate first using `paws` and then pass these
+  details onto `noctua` so we can choose the staging directory and temporary
+  database name based on . If we allowed `noctua` to authenticate automatically
+  (which was not possible when this package was written but now seems to be 
+  possible then these parameters would be set automatically, or the user would
+  need to specify them).
+  + When the connection object is created then it is not known whether the
+  temporary database actually exists - it is not created unless it is actually
+  needed, unless the temporary database is set as the default schema.
++ Provides a function to refreshing the connection - this really creates a new
+connection object using the same parameters as the previous one and then sets
+all the information in the old connection objects slots to match the new one 
+(so functionally it is the same connection object).
+  + Refreshing is important because some tables created by `Rdbtools` are only
+  accessible by the same session as created them.
+
+#### db_commands.R
+
++ Defines the methods to use on `MoJAthenaConnection` objects so that the
+`__temp__` database gets replaced with the appropriate string
+before calling the appropriate `AthenaConnection` method from `noctua`
+This may not be an exhaustive list of methods, but any other
+method from the DBI/noctua packages will still work due to class inheritance,
+but may not replace the `__temp__` word (unless it calls `dbExecute` itself)
++ Note that if the arguments get changed in `noctua` then the method calls in
+this file will need to be changed to match
+
+#### credentials.R
+
++ Provides a function to get temporary credentials to access the Athena on
+the AP. This uses `paws`, see here: https://paws-r.github.io/docs/sts/ for more
+details.  This is where changes will need to be made if the AP changes its
+authentication methods.
++ This file also has a function which determines which `AWS_region` should be
+used - this is intended to make sure users and apps get a sensible default
+which works for them.
+
+#### utils.R
+
++ Provides the functions which makes the strings to set the name of the 
+temporary database and creates the temporary database if required. 
++ Provides the function to create the string of the staging directory.
++ Note that these functions set these names to be the same as the `dbtools`
+package which this package mirrors. I do not know whether it is important that
+these are exactly what they are (see questions below).
+
+## Outstanding issues and extensions
+
+### Refreshing
+
+Refreshing the connection object currently would not persist any settings 
+except:
+
+ + role_session_name
+ + aws_region
+ + staging_dir
+ + session_duration
+ 
+So advanced users might one day create a connection object which errors after
+it is refreshed because it is not really the same.
+So far this has not arisen as an issue - the fix will be to ensure the
+required arguments are extracted from a slot in the connection object and then
+used in the new call to create a new connection.
+
+### Overwriting sometimes just appends?
+
+I have noticed that sometimes writing tables, e.g.
+`dbWriteTable(con, "test", df, overwrite = TRUE)`,
+does not overwrite the data within, but appends them.
+This has not been reported as a bug yet by anyone, and also rerunning the 
+command usually seems to give the expected result on the second attempt so I 
+have not been able to reliably reproduce it and therefore fix it.
+It happens occasionally during my unit testing, but I have not seen it
+elsewhere.
+Very odd!
+
+### Automatic refreshing
+
+It would be nice if the connection object automatically refreshed itself
+when it was passed expiry.
+This could be implemented by modifying the lines which check for expiry and
+throws an error in `db_commands.R`, e.g.
+`if (!is_auth_within_expiry(conn, window = 0)) stop("Authentication has expired.")`.
+I have not had time to try this, and we would want to be careful with error
+handling and limiting the number of failed authentication attempts.
+
+### Temporary database subsitution
+
+The temporary database substitution works well for the `DBI` commands, but 
+does not work for `dbplyr` commands.
+It would be nice to be able to do things like 
+`dplyr::copy_to(con, iris, "__temp__.iris")` but I have not found a way to
+implement this.
+The current workaround is to set the default schema when the connection object is
+made to the temporary database,
+`con <- connect_athena(schema_name = "__temp__")`,
+so then `dplyr::copy_to(con, iris, "iris")` will do the same thing.
+
+## Troubleshooting
+
+Mostly the issue is that `renv` ends up with a selection of packages which are
+incompatible - this should always be the first thing to check.
