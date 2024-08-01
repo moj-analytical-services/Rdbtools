@@ -200,3 +200,12 @@ so then `dplyr::copy_to(con, iris, "iris")` will do the same thing.
 
 Mostly the issue is that `renv` ends up with a selection of packages which are
 incompatible - this should always be the first thing to check.
+
+When the problem is with `Rdbtools`, but it was previously working, then 
+checking for breaking changes on the `noctua` github page or `paws` github page
+sometimes gives the answer.
+Sometimes it is a more subtle change (e.g. where `noctua` changed their process
+so it required a new Athena permission which AP users did not have by default -
+so then the AP team had to add that permission for us).
+
+
