@@ -27,6 +27,19 @@ test_that("Test writing and reading", {
 
 })
 
+test_that("Test reading with dbplyr", {
+
+  df_return2 <- dplyr::tbl(ath_con,
+                           from = dbplyr::sql(paste0("select * from ",
+                                                     athena_temp_db(ath_con),
+                                                     ".testthat"))) %>%
+    dplyr::collect()
+
+  expect_equal(df_return2, df, ignore_attr = TRUE)
+
+})
+
+
 
 test_that("Test existing and listing before removing", {
 
