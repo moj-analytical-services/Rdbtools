@@ -47,5 +47,5 @@ access purposes.
 
 }
 \seealso{
-See also noctua's documentation for connecting to a database \link[noctua:dbConnect-AthenaDriver-method]{noctua::dbConnect,AthenaDriver-method}
+See also noctua's documentation for connecting to a database \link[noctua:dbConnect,AthenaDriver-method]{noctua::dbConnect,AthenaDriver-method}
 }
