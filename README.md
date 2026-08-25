@@ -1,7 +1,5 @@
 # Rdbtools
 
-**Please note that this is not officially supported by the AP team and is intended to be community supported.**
-
 ## What is Rdbtools?
 
 This is an extension of the `noctua` package, for interacting with AWS Athena through the MoJ's analytical platform.
