@@ -8,23 +8,6 @@
 }
 \arguments{
 \item{conn}{A DBIConnection object, as returned by \code{connect_athena()}}
-
-\item{name}{The table name, passed on to \code{\link[DBI:dbQuoteIdentifier]{dbQuoteIdentifier()}}. Options are:
-\itemize{
-\item a character string with the unquoted DBMS table name,
-e.g. \code{"table_name"},
-\item a call to \code{\link[DBI:Id]{Id()}} with components to the fully qualified table name,
-e.g. \code{Id(schema = "my_schema", table = "table_name")}
-\item a call to \code{\link[DBI:SQL]{SQL()}} with the quoted and fully qualified table name
-given verbatim, e.g. \code{SQL('"my_schema"."table_name"')}
-}}
-
-\item{delete_data}{Deletes S3 files linking to AWS Athena table}
-
-\item{confirm}{Allows for S3 files to be deleted without the prompt check. It is recommend to leave this set to \code{FALSE}
-to avoid deleting other S3 files when the table's definition points to the root of S3 bucket.}
-
-\item{...}{Other parameters passed on to methods.}
 }
 \description{
 See \link[noctua:AthenaConnection]{noctua::dbRemoveTable}. This function calls \code{noctua::dbRemoveTable()}, after replacing any references to \verb{__temp__}

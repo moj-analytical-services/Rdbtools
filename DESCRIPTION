@@ -1,6 +1,6 @@
 Package: Rdbtools
 Title: Connects the MoJ Analytical Platform to Athena
-Version: 0.5.2
+Version: 0.5.3
 Authors@R: 
     person(given = "First",
            family = "Last",
@@ -27,6 +27,7 @@ Imports:
 Collate: 
     'Rdbtools.R'
     'athena_connection.R'
+    'compatibility.R'
     'credentials.R'
     'db_commands.R'
     'utils.R'

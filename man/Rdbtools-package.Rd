@@ -16,4 +16,9 @@ Authors:
   \item First Last \email{first.last@example.com}
 }
 
+Authors:
+\itemize{
+  \item First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+}
+
 }

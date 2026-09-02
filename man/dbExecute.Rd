@@ -8,10 +8,6 @@
 }
 \arguments{
 \item{conn}{A DBIConnection object, as returned by \code{connect_athena()}}
-
-\item{statement}{a character string containing SQL.}
-
-\item{...}{Other parameters passed on to methods.}
 }
 \description{
 See \link[noctua:AthenaConnection]{noctua::dbExecute}. This function calls \code{noctua::dbExecute()}, after replacing any references to \verb{__temp__}
