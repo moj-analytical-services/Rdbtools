@@ -14,11 +14,11 @@ noctua::dbDisconnect
 
 #' dbGetQuery
 #'
-#' See [noctua::dbGetQuery()]. This function calls `noctua::dbGetQuery()`, after replacing any references to `__temp__`
+#' See [noctua::dbGetQuery][noctua::AthenaConnection]. This function calls `noctua::dbGetQuery()`, after replacing any references to `__temp__`
 #' in the statement with your temporary database in Athena. Your temporary database will be created
 #' if you do not already have one.
 #'
-#' @inheritParams noctua::dbGetQuery
+#' @inheritParams noctua::AthenaConnection
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetQuery
 #' @export
@@ -35,11 +35,11 @@ setMethod("dbGetQuery", c("MoJAthenaConnection","character"),
 
 #' dbExecute
 #'
-#' See [noctua::Query]. This function calls `noctua::dbExecute()`, after replacing any references to `__temp__`
+#' See [noctua::dbExecute][noctua::AthenaConnection]. This function calls `noctua::dbExecute()`, after replacing any references to `__temp__`
 #' in the statement with your temporary database in Athena. Your temporary database will be created
 #' if you do not already have one.
 #'
-#' @inheritParams noctua::Query
+#' @inheritParams noctua::AthenaConnection
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbExecute
 #' @export
@@ -55,12 +55,12 @@ setMethod("dbExecute", c("MoJAthenaConnection","character"),
 
 #' dbGetTables
 #'
-#' See [noctua::dbGetTables()]. This function calls `noctua::dbGetTables()` but if
+#' See [noctua::dbGetTables][noctua::AthenaConnection]. This function calls `noctua::dbGetTables()` but if
 #' the schema argument is `__temp__` then it looks at your temporary database in Athena.
 #' NOTE: that the schema is the first argument here, to retain backwards compatibility with previous version of `Rdbtools`.
 #' From `noctua` 2.6.2 the first argument is `catalog`.
 #'
-#' @inheritParams noctua::dbGetTables
+#' @inheritParams noctua::AthenaConnection
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbGetTables
 #' @export
@@ -76,7 +76,7 @@ setMethod("dbGetTables", "MoJAthenaConnection",
 
 #' dbListTables
 #'
-#' See [noctua::dbListTables()]. This function calls `noctua::dbListTables()` but if
+#' See [noctua::dbListTables]. This function calls `noctua::dbListTables()` but if
 #' the schema argument is `__temp__` then it looks at your temporary database in Athena.
 #' NOTE: that the schema is the first argument here, to retain backwards compatibility with previous version of `Rdbtools`.
 #' From `noctua` 2.6.2 the first argument is `catalog`.
@@ -97,10 +97,10 @@ setMethod("dbListTables", "MoJAthenaConnection",
 
 #' dbExistsTable
 #'
-#' See [noctua::dbExistsTable()]. This function calls noctua::dbExistsTable(), after replacing any references to `__temp__`
+#' See [noctua::dbExistsTable][noctua::AthenaConnection]. This function calls noctua::dbExistsTable(), after replacing any references to `__temp__`
 #' in the name argument with your temporary database in Athena.
 #'
-#' @inheritParams noctua::dbExistsTable
+#' @inheritParams noctua::AthenaConnection
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbExistsTable
 #' @export
@@ -140,10 +140,10 @@ setMethod("dbExistsTable", c("MoJAthenaConnection","character"),
 
 #' dbListFields
 #'
-#' See [noctua::dbListFields()]. This function calls `noctua::dbListFields()`, after replacing any references to `__temp__`
+#' See [noctua::dbListFields][noctua::AthenaConnection]. This function calls `noctua::dbListFields()`, after replacing any references to `__temp__`
 #' in the name argument with your temporary database in Athena.
 #'
-#' @inheritParams noctua::dbListFields
+#' @inheritParams noctua::AthenaConnection
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbListFields
 #' @export
@@ -159,10 +159,10 @@ setMethod("dbListFields", c("MoJAthenaConnection","character"),
 
 #' dbRemoveTable
 #'
-#' See [noctua::dbRemoveTable()]. This function calls `noctua::dbRemoveTable()`, after replacing any references to `__temp__`
+#' See [noctua::dbRemoveTable][noctua::AthenaConnection]. This function calls `noctua::dbRemoveTable()`, after replacing any references to `__temp__`
 #' in the names argument with your temporary database in Athena.
 #'
-#' @inheritParams noctua::dbRemoveTable
+#' @inheritParams noctua::AthenaConnection
 #' @param conn A DBIConnection object, as returned by `connect_athena()`
 #' @rdname dbRemoveTable
 #' @export

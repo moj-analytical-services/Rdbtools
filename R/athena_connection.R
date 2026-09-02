@@ -17,7 +17,7 @@ setClass(
 #'
 #' Creates a connection object which permits the user to interact with the
 #' Athena databases that are hosted on the MoJ's Analytical Platform.
-#' It uses the [noctua package][https://dyfanjones.github.io/noctua/], with the MoJ's authentication.
+#' It uses the \href{https://dyfanjones.github.io/noctua/}{noctua}, with the MoJ's authentication.
 #' This returns an object with class MoJAthenaConnection, which inherits
 #' methods from noctua's AthenaConnection class, which in turn are DBI
 #' methods.

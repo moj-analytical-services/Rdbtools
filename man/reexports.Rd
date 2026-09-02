@@ -11,6 +11,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{noctua}{\code{\link[noctua]{dbDisconnect}}}
+  \item{noctua}{\code{\link[noctua:dbDisconnect]{dbDisconnect}}}
 }}
 

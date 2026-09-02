@@ -15,5 +15,5 @@ create_temp_table(sql, table_name, conn = NULL)
 }
 \description{
 A convenience function to match dbtools which creates a table in the user's temporary database.
-Please now use \code{\link[=dbExecute]{dbExecute()}} directly instead, e.g. with variables \code{conn}, \code{table_name} and \code{sql} then run: \verb{dbExecute(conn, glue("CREATE TABLE __temp__.\{table_name\} as \{sql\}")})
+Please now use \code{\link[DBI:dbExecute]{dbExecute()}} directly instead, e.g. with variables \code{conn}, \code{table_name} and \code{sql} then run: \verb{dbExecute(conn, glue("CREATE TABLE __temp__.\{table_name\} as \{sql\}")})
 }

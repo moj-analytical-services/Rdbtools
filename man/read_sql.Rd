@@ -7,7 +7,7 @@
 read_sql(sql_query, return_df_as = "tibble", conn = NULL)
 }
 \arguments{
-\item{sql_query}{A sql command which is passed to \code{\link[=dbGetQuery]{dbGetQuery()}}}
+\item{sql_query}{A sql command which is passed to \code{\link[DBI:dbGetQuery]{dbGetQuery()}}}
 
 \item{return_df_as}{must be 'tibble' or 'data.table'.}
 
@@ -15,5 +15,5 @@ read_sql(sql_query, return_df_as = "tibble", conn = NULL)
 }
 \description{
 A convenience function to match dbtools which reads a table into a tibble or dataframe.
-Please now use \code{\link[=dbGetQuery]{dbGetQuery()}} directly instead.
+Please now use \code{\link[DBI:dbGetQuery]{dbGetQuery()}} directly instead.
 }

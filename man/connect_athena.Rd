@@ -32,7 +32,7 @@ connect_athena(
 \description{
 Creates a connection object which permits the user to interact with the
 Athena databases that are hosted on the MoJ's Analytical Platform.
-It uses the \link[=https://dyfanjones.github.io/noctua/]{noctua package}, with the MoJ's authentication.
+It uses the \href{https://dyfanjones.github.io/noctua/}{noctua}, with the MoJ's authentication.
 This returns an object with class MoJAthenaConnection, which inherits
 methods from noctua's AthenaConnection class, which in turn are DBI
 methods.
@@ -47,5 +47,5 @@ access purposes.
 
 }
 \seealso{
-See also noctua's documentation for connecting to a database \link[noctua:dbConnect-AthenaDriver-method]{noctua::dbConnect,AthenaDriver-method}
+See also noctua's documentation for connecting to a database \link[noctua:dbConnect,AthenaDriver-method]{noctua::dbConnect,AthenaDriver-method}
 }
