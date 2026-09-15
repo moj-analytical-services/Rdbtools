@@ -9,9 +9,9 @@ Also, the previous available version did not work with `dbpylr` from v2.6.0.
 In the interim, to install `Rdbtools` you should install a fork of `noctua` with the following command before installing `Rdbtools`:
 
  - If using renv:
-     - install `Rdbtools`: `renv::install("pjrh-moj/noctua")` or if that doesn't work try `renv::install("git@github.com:pjrh-moj/noctua.git")`
+     - install `Rdbtools`: `renv::install("dyfanjones/noctua")` or if that doesn't work try `renv::install("git@github.com:dyfanjones/noctua.git")`
  - If not using renv:
-     - install `Rdbtools`: `devtools::install_github("pjrh-moj/noctua")` (you may need to install devtools first)
+     - install `Rdbtools`: `devtools::install_github("dyfanjones/noctua")` (you may need to install devtools first)
 
 ## What is Rdbtools?
 
