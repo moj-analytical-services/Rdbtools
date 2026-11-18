@@ -1,4 +1,6 @@
-# PLEASE READ
+> [!WARNING]
+> **This package is no longer maintained. Please use `noctua` instead
+> as described here.**
 
 This package is no longer required to access data from R.
 It is merely a wrapper around the package `noctua` which provides all the
@@ -29,7 +31,7 @@ The parameters in the `dbConnect` command above should not need to be changed in
 
 + `rstudio_conn_tab` - this is set FALSE to avoid an error because AP users do not have the permissions required to populate RStudio's connection pane. There should be no need to change this parameter.
 + `region_name` - this should obtain the region the region set by the AP. For certain apps then this may need to be changed to the relevant region. Most users accessing data should not need to adjust this.
-+ `s3_staging_dir` - this is required, and the code above sets this to a temporary folder which will enable reading of data, based on your AP username (which is contained within the `AWS_ROLE_ARN` environment variable. This folder is not suitable if you want to write data to a new Athena table. See *Writing data to Athena* below for more details.
++ `s3_staging_dir` - this is required, and the code above sets this to a temporary folder which will enable reading of data, based on your AP username (which is contained within the `AWS_ROLE_ARN` environment variable. This folder is not suitable if you want to write data to a new Athena table, so consider identifying an appropriate location and supplying this to the `s3.location` argument in `dbWriteTable`. 
 
 Additional useful parameters:
 + `schema_name` - this sets the default database which is used if you only specify a table name in subsequent commands. 
