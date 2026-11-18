@@ -14,11 +14,13 @@ Almost all existing code can be reused by simply directly creating the connectio
 object using `noctua`. The following code will work for almost all users for 
 reading data from Athena:
 
-```
-con <- noctua::dbConnect(noctua::athena(),
-                 rstudio_conn_tab = FALSE,
-                 region_name = Sys.getenv("AWS_DEFAULT_REGION"),         
-                 s3_staging_dir = gsub("^.*/", "s3://mojap-athena-query-dump/", Sys.getenv('AWS_ROLE_ARN')))
+```R
+con <- noctua::dbConnect(
+  noctua::athena(),
+  rstudio_conn_tab = FALSE,
+  region_name = Sys.getenv("AWS_DEFAULT_REGION"),         
+  s3_staging_dir = gsub("^.*/", "s3://mojap-athena-query-dump/", Sys.getenv('AWS_ROLE_ARN'))
+)
 ```
 
 You can then use this connection object as a drop in replacement in your previous code.
