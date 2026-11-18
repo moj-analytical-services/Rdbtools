@@ -1,3 +1,47 @@
+# PLEASE READ
+
+This package is no longer required to access data from R.
+It is merely a wrapper around the package `noctua` which provides all the
+functionality and was written to easily migrate users from a previous package
+and to hide the details of authentication from the user. `noctua` now handles
+this seamlessly and so `Rdbtools` is no longer required.
+
+### Using noctua
+
+Almost all existing code can be reused by simply directly creating the connection
+object using `noctua`. The following code will work for almost all users for 
+reading data from Athena:
+
+```
+con <- noctua::dbConnect(noctua::athena(),
+                 rstudio_conn_tab = FALSE,
+                 region_name = Sys.getenv("AWS_DEFAULT_REGION"),         
+                 s3_staging_dir = gsub("^.*/", "s3://mojap-athena-query-dump/", Sys.getenv('AWS_ROLE_ARN')))
+```
+
+You can then use this connection object as a drop in replacement in your previous code.
+
+This connection object is used in subsequent calls to `DBI` or `dbplyr` to manipulate and extract data on Athena.
+
+### Parameters
+
+The parameters in the `dbConnect` command above should not need to be changed in most instances, however this explains what they are:
+
++ `rstudio_conn_tab` - this is set FALSE to avoid an error because AP users do not have the permissions required to populate RStudio's connection pane. There should be no need to change this parameter.
++ `region_name` - this should obtain the region the region set by the AP. For certain apps then this may need to be changed to the relevant region. Most users accessing data should not need to adjust this.
++ `s3_staging_dir` - this is required, and the code above sets this to a temporary folder which will enable reading of data, based on your AP username (which is contained within the `AWS_ROLE_ARN` environment variable. This folder is not suitable if you want to write data to a new Athena table. See *Writing data to Athena* below for more details.
+
+Additional useful parameters:
++ `schema_name` - this sets the default database which is used if you only specify a table name in subsequent commands. 
+
+See the `noctua` [documentation here](https://dyfanjones.github.io/noctua/reference/dbConnect-AthenaDriver-method.html) for more details about creating a connection object.
+
+### Differences when using noctua, compared to using Rdbtools
+
++ Users who rely on the temporary database shortcut (using the `__temp__` string) will have to specify a database to use.
+Users will have to create their own database to use first.
++ The function `read_sql`, which was included in `Rdbtools` for backwards compatibility with `dbtools` is not available. Users will have to use the `dbGetQuery` instead.
+
 # Rdbtools
 
 **Please note that this is not officially supported by the AP team and is intended to be community supported.**
